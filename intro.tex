@@ -1,0 +1,125 @@
+\section{Introduction}
+\label{sec:introduction}
+
+\begin{itemize}
+
+\item Memory performance is critical to many important applications
+\item Different applications have different requirements
+\item Memory system is getting complicated; so is memory management
+\item Coordination between different memory levels is getting important
+\item Application-specific memory management is needed
+\item Coordinated memory management, including replacement, prefetching
+page policy, and scheduling
+\item Multi-level coordination
+\item Machine-learning based management
+\item Feature selection, sharing between different levels, feedback 
+between different levels
+\item Run-time behavior identification
+\item Accelerators for application-specific memory management is needed?
+\item What should be the architecture of accelerator?
+\item Location: OS, memory controller, DIMM, or chip?
+
+\end{itemize}
+
+Today's computer systems have seen increasing demands on memory systems'
+performance, energy efficiency, and reliability~\cite{XXX}. Many 
+important applications are memory-intensive, such as XXX~\cite{XXX}.
+Innumerous research efforts have been spent to tackle the memory wall
+problem~\cite{XXX} at different memory hierarchy levels.  The memory
+system is getting more and more complicated, such as more cache levels
+to fill the processor-memory speed gap and main memory with diverse
+storage technologies.  As a result, the management of memory system
+is also getting more and more complicated in order to achieve better
+performance, energy efficiency, and reliability.  For instance,
+various cache replacement policies have been proposed to reduce the cache miss
+rates~\cite{XXX}; numerous prefetching schemes have been proposed to predict 
+future cache misses and fetch those in advance~\cite{XXX}; and different memory
+access scheduling schemes have been proposed to reorder concurrent main memory
+requests in order to reduce their average access latency and increase
+their bandwidth~\cite{XXX}.  Although each scheme is effective to
+achieve its own goal but multiple schemes usually work in isolation and 
+do not consider other schemes employed in the system.  For example,
+a replacement policy may not consider the impact on the prefetching
+engine or the access scheduler when making the replacement decision.
+This is understandable and desirable in some sense since otherwise
+its design might get too complicated with high implementation cost.
+However, such isolated designs are not globally optimal. To further
+advance the memory system performance, coordinated management across
+different memory hierarchy levels would be needed.
+
+In this project, we propose a machine learning based, coordinated memory
+management framework that coordinates the management policies at different
+memory hierarchy levels to achieve the optimal memory performance,
+energy efficiency and reliability.  
+Our proposed schemes have two steps. The first one
+is an enhancement to exsiting systems. It utilizes existing memory
+management schemes, such as the existing cache replacement policies or
+prefetching policies, but add a helper component at each level to
+improve the existing policy's efficiency, such as a prefetching 
+filter to filter out some unnecessary prefetching requests.  The helpers
+will use the feedback information from other levels to coordinate
+the memory management.  This approach can limit the design complexity
+since it is an enhancement to existing schemes.  The second approach
+will go one step further and re-design the management schemes at
+each level by considering the status of other levels.  This would lead
+to better performance and energy efficiency but also higher design
+complexity and implementation cost.
+
+An important design consideration is how to coordinate the multi-level
+cache/memory management schemes and incorporate the feedback
+information with the existing memory management schemes, such as
+the cache replacement policies and memory scheduling policies.
+Different applications or different execution phases of an application
+may have different memory access patterns.  As a result, the optimal
+cache replacement policy or the optimal memory access scheduling
+policy may vary during an application's execution or across different
+applications.  The helper component may use the feedback information
+from other levels as features of the DNN network to select the
+optimal replacement or scheduling policy for the current execution
+phase of an application.  In this way, we can utilize the existing
+cache/memory management schemes and minimize the implementation
+complexity.
+
+We will study which feedback information should be collected at each
+level, how to collect them efficiently during run-time, how to pass
+them efficiently to other levels, and how to use them to guide the
+selection of cache replacement, prefetching and memory access scheduling
+policies.
+
+For the second step, we aim to develop a coordinated scheme that optimizes
+the management of memory hierarchy globally instead of locally at each 
+level.  To achieve this goal, a global controller will collect status
+information from each level, determine the features that should be used
+at each level, and send the information back to the controller at each
+level.  Then each level's local controller will use the selected 
+feature to make the decision, such as which cache block to be replaced
+or prefetched, and which pending memory request should be served next.
+A design challenge is how to balance between the isolation of each level's
+management scheme and their coordination.  The isolation helps to reduce
+the implementation complexity at each level; while the coordination can
+improve the peformance and energy efficiency.  It used to be the isolation
+approach dominates since a coordinated management scheme would be too
+complicated to be used in practice.  With the wide application of DNN
+techniques at architecture designs, the coordination between different
+levels with limited extra implementation cost becomes possible.  The
+feedback informations from other levels can be used as features of the
+management engines at each level.  For instance, the cache replacement
+engine can use the feedback information from the memory controller to
+aid the selection of replaced blocks.  If one candidate block comes
+from an access stream with good locality at DRAM level, while another
+candidate block comes from another stream with poor locality, the
+cache controller may choose to replace the one with good locality at
+DRAM since the former one has smaller miss overhead than the later one.
+The memory access scheduler may also use the feedback information from
+the cache controller and prefetcher to assist the reordering of 
+pending memory requests.  For example, it can give higher priority
+to a prefetching request with high confidence level than another
+prefetching request with low confidence level.
+
+Of course, all these interactions between different memory hierachy 
+levels will increase the complexity of memory management. How to balance
+between the design complexity and effectiveness would be an important
+part of our study.  Furtheremore, since the complexity of coordinated
+memory management would be much more complicated than the conventional
+management, we will design accelerators that can speed up the DNN
+processing the coordinated memory management.

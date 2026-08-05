@@ -1,0 +1,34 @@
+\section{Background and Related Work}
+
+\paragraph{Cache Replacement} To fill the speed gap between the processor
+and memory, multiple levels of caches are employed in today's computer
+systems.  An important design consideration is the cache replacement
+policy. It determines which block to be replaced when a cache miss happens.
+Since this affects the memory system performance and enegy efficiency
+significantly, a lot of research efforts have been spent on optimizing
+the cache replacement policy, especially for multi-core and multi-threaded
+processors where multiple applications run concurrently and compete for
+the limited cache space.
+
+\paragraph{Prefetching} Prefetching is an effective technique that
+can hide the long memory access latency.  It predicts future cache
+misses based on the current memory access pattern (usually current
+and past cache misses), and issues those predicted-future misses
+in advance in hope that when future misses happen, the required
+data have already been fetched from lower level(s) of memory
+hierarchy~\cite{Vanderwiel:CSUR-2000, Mittal:CSUR-2016}.  Prefetching
+can be either software-based or hardware-based.  The software-based
+approaches insert explicit prefetch instructions into the code by
+programmers or compilers and usually only work for applications
+with regular access patterns.  Most performance-oriented processors
+today implement hardware prefetchers that can predict future cache
+misses during run-time.  They usually utilize metadata within the
+processor, such as PC, request's tag, delta between successive
+requests, and signature of recent requests, to predict future cache
+misses~\cite{Hu:HPCA-2003, Ishii:ICS-2009, Grannaes:HPEAC-2010,
+Yu:MICRO-2015, Kim:MICRO-2016, Hashemi:ICML-2018, Bakhshalipour:HPCA-2019, 
+Ayers:ASPLOS-2020, Litz:ASPLOS-2022, Navarro:MICRO-2022, Zhang:TPDS-2025}.
+
+\paragraph{Memory Access Scheduling}
+
+\paragraph{DNN}

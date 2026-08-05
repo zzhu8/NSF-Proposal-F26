@@ -1,6 +1,9 @@
 ## From GitHub Tex.gitignore
 ## https://github.com/github/gitignore/blob/main/TeX.gitignore
 
+## specific files not to track
+main.pdf
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof

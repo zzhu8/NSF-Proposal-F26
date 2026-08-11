@@ -3,6 +3,7 @@
 
 ## specific files not to track
 main.pdf
+summary.pdf
 
 ## Core latex/pdflatex auxiliary files:
 *.aux

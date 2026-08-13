@@ -4,6 +4,7 @@
 ## specific files not to track
 .DS_Store
 main.pdf
+summary.pdf
 
 ## Core latex/pdflatex auxiliary files:
 *.aux

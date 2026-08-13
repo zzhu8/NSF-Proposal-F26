@@ -1,19 +1,30 @@
 \section{Background and Related Work}
 
-\paragraph{Cache Replacement} To fill the speed gap between the processor
+\paragraph{Cache Management} 
+To fill the speed gap between the processor
 and memory, multiple levels of caches are employed in today's computer
-systems.  An important design consideration is the cache replacement
-policy. It determines which block to be replaced when a cache miss happens.
-Since this affects the memory system performance and enegy efficiency
-significantly, a lot of research efforts have been spent on optimizing
-the cache replacement policy, especially for multi-core and multi-threaded
+systems.  Cache placement and replacement policies are important
+design considerations~\cite{Smith:CSUR-1982}. 
+They determine where to put a block in the cache and 
+which block to be replaced when a cache miss happens,
+and affect the memory system performance and enegy efficiency
+significantly. A lot of research efforts have been done in this
+area especially for multi-core and multi-threaded
 processors where multiple applications run concurrently and compete for
-the limited cache space.
+the limited cache space.  For instance, various partitioning techniques
+on shared caches try to balance among performance, fairness and 
+QoS.  The partitioning might be way-based, set-based, or 
+block-based and be guided by the estimated impact on cache 
+misses, memory latency, IPC, bandwidth or other performance
+factors~\cite{Kim:PACT-2004, Suh:JSC-2004, Chang:ISCA-2006, 
+Qureshi:MICRO-2006, Lin:HPCA-2008, Awasthi:HPCA-2009, Sanchez:ISCA-2011,
+Cook:ISCA-2013, Mittal:CSUR-2017, Xiao:ICPP-2019,
+Chung:PACT-2019, Kwon:MICRO-2023, Lee:MICRO-2025}.
 
 \paragraph{Prefetching} Prefetching is an effective technique that
 can hide the long memory access latency.  It predicts future cache
 misses based on the current memory access pattern (usually current
-and past cache misses), and issues those predicted-future misses
+and past cache misses), and issues those predicted future misses
 in advance in hope that when future misses happen, the required
 data have already been fetched from lower level(s) of memory
 hierarchy~\cite{Vanderwiel:CSUR-2000, Mittal:CSUR-2016}.  Prefetching
@@ -28,6 +39,7 @@ requests, and signature of recent requests, to predict future cache
 misses~\cite{Hu:HPCA-2003, Ishii:ICS-2009, Grannaes:HPEAC-2010,
 Yu:MICRO-2015, Kim:MICRO-2016, Hashemi:ICML-2018, Bakhshalipour:HPCA-2019, 
 Ayers:ASPLOS-2020, Litz:ASPLOS-2022, Navarro:MICRO-2022, Zhang:TPDS-2025}.
+Prefetch filtering ...
 
 \paragraph{Memory Access Scheduling}
 

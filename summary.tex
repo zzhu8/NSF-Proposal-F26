@@ -1,0 +1,86 @@
+\sdocumentclass[11pt]{article}
+\usepackage{times}
+\usepackage[left=1in,top=1in,right=1in,bottom=1in,nohead,nofoot]{geometry}
+
+\begin{document}
+
+\thispagestyle{empty}
+%\section*{A. Project Summary}
+%\section*{Project Summary}
+%\vspace{0.2in}
+
+\section*{Overview}
+
+% Cache and memory systems are increasingly complex, and thus ML techniques
+% can play increasingly important roles
+
+Cache and main memory are critical to the performance and energy efficiency of
+today's computer systems.  With their increasing design complexity, it is more
+and more challenging to optimize their performance for memory-intensive
+workloads.  Machine learning (ML) techniques have been explored in a limited
+scope to improve their performance, particularly in cache prefetching and memory
+access scheduling. However, there remains considerable opportunities for ML
+techniques to play a more substantial role.
+
+% Here discuss the scope of ML components
+This project will investigate a holistic framework of ML techniques to improve
+the performance and energy efficiency of caches and main memories for multi-core
+processors.  It consists of three ML components for cache replacement, cache
+prefetch filtering, and memory access scheduling, respectively.  Those ML
+components will be seamlessly integrated with the corresponding hardware
+components, namely cache controller, cache prefetcher, and memory controller, to
+refine their decision-making logic for better performance and energy efficiency.
+Those ML components will improve cache hit rates, prefetching accuracy, and
+memory channel utilization, respectively.  Working together, they may
+significantly improve the performance and energy efficiency of a wide range of
+memory intensive workloads, without any significant increase the overall cost
+of the processors.
+
+% Here discuss the design of each component
+The project will study in depth the design of those ML components, focusing on
+circuit efficiency and ML robustness.  Instead of using static feature selection
+and weight tables customized for pre-selected and limited features, in this
+project the ML components will each use a set of shared weight tables with a
+much larger set of selectable features.  Algorithms will be developed to choose
+an optimal set of features dynamically for the current workloads and their
+current running phases. This approach enables machine learning over a broad
+feature set without excessive hardware cost, and therefore can be explore more
+opportunities for machine learning.  The project will investigate the design and
+optimization space starting from a baseline design, and then evaluate the ML
+learning effectiveness of those components as well as the overall improvements
+of performance and energy efficiency.
+
+% Here discuss the coordination
+The project will further develop a coordination framework for those ML
+components, which are distributed within a multi-core processor, to improve
+their learning effectiveness.  This research direction explores potential,
+inherent correlations among caching, prefetching, and memory access scheduling
+to coordinate the learning process of those distributed ML components.  In the
+coordination framework, they may interactively learn from each other about
+workload phase changes, optimal dynamic feature selection, optimal learning
+intensity, and others; and may provide new features to broaden the feature
+selection.  The project will fully investigate the potential of this approach
+and its limitations.
+
+\section*{Intellectual Merits}
+
+The proposed research presents innovative strategies of applying machine
+learning techniques to improve the performance and energy efficiency of cache
+and main memory systems.  It incorporates distributed ML components throughout
+the cache and memory hierarchy, and coordinates their learning processes
+systematically.  It uses dynamic feature selection to broaden the feature set
+without excessive hardware cost, and allows those ML components to learn from
+each other in coordination.  The approach will provide new insights about how to
+utilize ML techinques effectively in improving memory performance and energy
+efficiency.
+
+\section*{Broader Impacts}
+
+The proposed research may significantly improve the performance and energy
+efficiency of modern cache and memory systems by leveraging the recent advances
+in machine learning techniques.  The education components will introduce the
+timely topics of memory system design and memory system reliability into
+undergraduate and graduate courses, broadening the knowledge of future computer
+engineers.
+
+\end{document}

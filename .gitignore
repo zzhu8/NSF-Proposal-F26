@@ -5,6 +5,10 @@
 .DS_Store
 main.pdf
 summary.pdf
+.vscode
+Notes.docx
+notes.md
+summary-2025.tex
 
 ## Core latex/pdflatex auxiliary files:
 *.aux

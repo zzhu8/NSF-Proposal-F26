@@ -3,7 +3,7 @@
 \paragraph{Cache Management} 
 To fill the speed gap between the processor
 and memory, multiple levels of caches are employed in today's computer
-systems.  Cache placement and replacement policies are important
+systems.  Cache allocation and replacement policies are important
 design considerations~\cite{Smith:CSUR-1982}. 
 They determine where to put a block in the cache and 
 which block to be replaced when a cache miss happens,
@@ -12,14 +12,34 @@ significantly. A lot of research efforts have been done in this
 area especially for multi-core and multi-threaded
 processors where multiple applications run concurrently and compete for
 the limited cache space.  For instance, various partitioning techniques
-on shared caches try to balance among performance, fairness and 
-QoS.  The partitioning might be way-based, set-based, or 
+on shared caches have been proposed. 
+The partitioning might be way-based, set-based, or 
 block-based and be guided by the estimated impact on cache 
 misses, memory latency, IPC, bandwidth or other performance
-factors~\cite{Kim:PACT-2004, Suh:JSC-2004, Chang:ISCA-2006, 
-Qureshi:MICRO-2006, Lin:HPCA-2008, Awasthi:HPCA-2009, Sanchez:ISCA-2011,
-Cook:ISCA-2013, Mittal:CSUR-2017, Xiao:ICPP-2019,
-Chung:PACT-2019, Kwon:MICRO-2023, Lee:MICRO-2025}.
+factors~\cite{Albonesi:MICRO-1999, Suh:HPCA-2002,
+Kim:PACT-2004, Suh:JSC-2004, Chandra:HPCA-2005, 
+Chang:ISCA-2006, Varadarajan:MICRO-2006, Hsu:PACT-2006,
+Qureshi:MICRO-2006, Lin:HPCA-2008, Awasthi:HPCA-2009, 
+Xie:ISCA-2009, Kaseridis:ICPP-2009, Kaseridis:HPCA-2010,
+Sanchez:ISCA-2011, Manikantan:ISCA-2012,
+Cook:ISCA-2013, Khan:HPCA-2014, Ye:PACT-2014,
+Brock:ICPP-2015, Gupta:ICPP-2015, Subramanian:MICRO-2015,
+Selfa:PACT-2017, Mittal:CSUR-2017, ElSayed:HPCA-2018, Xiao:ICPP-2019,
+Chung:PACT-2019, Sun:IPDPS-2019, Pons:TPDS-2020, Park:TC-2020,
+Kwon:MICRO-2023, Lee:MICRO-2025}.
+They usually work with the cache placement and replacement policies to optimize
+the performance, energy efficiency, fairness or QoS~\cite{Stone:TC-1992,
+Sherwood:ICS-1999, Takagi:ICS-2004,
+Varadarajan:MICRO-2006, Keramidas:ICCD-2007, Qureshi:ISCA-2007,
+Jaleel:PACT-2008, Kharbutli:TC-2008, Liu:MICRO-2008,
+Jaleel:ISCA-2010, Sanchez:MICRO-2010, 
+Wu:TACO-2011, Wu:MICRO-2011, Duong:MICRO-2012, Wong:Online-2013, 
+Tian:JMM-2014, Wang:MICRO-2014, Das:TACO-2015, Teran:MICRO-2016,
+Beckmann:HPCA-2017, Jimenez:MICRO-2017, Kim:ASPLOS-2017,
+Shi:MICRO-2019, Zhang:ICPADS-2020, Sethumurugan:HPCA-2021,
+Championship:2010, Championship:2017}.
+
+combine prefetching and replacement~\cite{Kim:ASPLOS-2017}
 
 \paragraph{Prefetching} Prefetching is an effective technique that
 can hide the long memory access latency.  It predicts future cache
@@ -36,11 +56,59 @@ today implement hardware prefetchers that can predict future cache
 misses during run-time.  They usually utilize metadata within the
 processor, such as PC, request's tag, delta between successive
 requests, and signature of recent requests, to predict future cache
-misses~\cite{Hu:HPCA-2003, Ishii:ICS-2009, Grannaes:HPEAC-2010,
-Yu:MICRO-2015, Kim:MICRO-2016, Hashemi:ICML-2018, Bakhshalipour:HPCA-2019, 
-Ayers:ASPLOS-2020, Litz:ASPLOS-2022, Navarro:MICRO-2022, Zhang:TPDS-2025}.
-Prefetch filtering ...
+misses~\cite{Fu:MICRO-1992, Chen:TC-1995, Joseph:ISCA-1997,
+Kumar:ISCA-1998, Reinman:MICRO-1999, 
+Hu:HPCA-2003, Nesbit:HPCA-2004, Somogyi:ISCA-2006,
+Manikantan:ICS-2008, Ishii:ICS-2009, 
+Ebrahimi:HPCA-2009, Grannaes:HPEAC-2010, Wenisch:HPCA-2009,
+Albericio:TACO-2012, Jain:MICRO-2013,
+Shevgoor:MICRO-2015, Yu:MICRO-2015, 
+Kim:MICRO-2016, Michaud:HPCA-2016,
+Zeng:MEMSYS-2017, Bakhshalipour:HPCA-2018,
+Hashemi:ICML-2018, Heirman:PACT-2018, Kondguli:ISCA-2018,
+Bakhshalipour:HPCA-2019, Bera:MICRO-2019, Wu:MICRO-2019, Wu:ISCA-2019,
+Ayers:ASPLOS-2020, Pakalapati:ISCA-2020, 
+Bera:MICRO-2021, Vavouliotis:ISCA-2021, Shi:ASPLOS-2021,
+Jiang:MICRO-2022, Lurbe:TC-2022,
+Litz:ASPLOS-2022, Navarro:MICRO-2022, Vavouliotis:MICRO-2022,
+Zhang:SC-2022,
+Gerogiannis:MICRO-2023, Panda:MICRO-2023, Anisworth:ISCA-2024, 
+Lin:TCAD-2024, Oh:ISCA-2024, Nath:MICRO-2024,
+Ai:MICRO-2025, He:MICRO-2025, Li:ISCA-2025, 
+Navarro:TC-2025, Xue:TACO-2025, Zhang:TPDS-2025, Chen:HPCA-2025,
+Huang:SPAA-2026, Huang:TACO-2026, Jiang:TACO-2026,
+Jamet:ISCA-2026, Lin:HPCA-2026, Wang:ISCA-2026, Xu:ASPLOS-2026,
+Ye:ISCA-2026, Shao:CAL-2026,
+Championship:2009, Championship:2015, Championship:2017,
+Championship:2026}.
+
+Prefetch filtering~\cite{Lin:ICCD-2001, Zhuang:ICPP-2003, Zhuang:TC-2007,
+Panda:CAL-2016, Bhatia:ISCA-2019, Jamet:HPCA-2024,
+Vavouliotis:HPCA-2025}.
+
+Prefetch (aggressiveness) controller~\cite{Srinath:HPCA-2007, 
+Ebrahimi:MICRO-2009, Pugsley:HPCA-2014,
+Panda:TACO-2015, 
+Panda:TC-2016, Sridharan:TACO-2017, Yang:TPDS-2025,
+Min:CAL-2026}.
+
+Prefetch + off-chip prediction~\cite{Bera:MICRO-2022, Bera:HPCA-2026}.
+
+Prefetcher selection~\cite{Li:HPCA-2025}.
+
+Bank-level parallelism aware prefetch issuing~\cite{Lee:MICRO-2009}.
+
+Prefetch-aware resource/cache management~\cite{Ebrahimi:ISCA-2011,
+Wu:MICRO-2011-2, Jain:ISCA-2018}.
+
+Neural model of data prefetching~\cite{Shi:ASPLOS-2021} (note:already cited above).
 
 \paragraph{Memory Access Scheduling}
 
+Prefetch-aware scheduling~\cite{Lee:MICRO-2008}
+
 \paragraph{DNN}
+
+Reinforcement learning on architecture~\cite{Gerogiannis:MICRO-2023}
+RL framework for prefetching~\cite{Zhang:SC-2022}
+Deep learning multi-program prefetch configuration for the IBM POWER 8~\cite{Lurbe:TC-2022}

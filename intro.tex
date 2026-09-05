@@ -3,24 +3,27 @@
 
 Today's computer systems have seen increasing demands on memory systems'
 performance, energy efficiency, and reliability~\cite{XXX}. Many
-important applications are memory-intensive, such as XXX~\cite{XXX}.
+real-world applications are memory-intensive, such as XXX~\cite{XXX}.
 Enormous research efforts have been spent to tackle the memory wall
-problem~\cite{XXX} at different memory hierarchy levels.  The memory
-system is getting more and more complicated, such as more cache levels
-to fill the processor-memory speed gap and main memory with diverse
-storage technologies.  As a result, the management of memory system
-is also getting more and more complicated in order to achieve better
+problem~\cite{XXX} at different memory hierarchy levels.  Memory
+systems are increasingly complicated, with three levels of caches
+and high data-rate DDR5 devices in main-stream systems, and potentially
+new and diverse memory technologies in the near future.
+As a result, the management of memory system
+is also getting more and more complicated in order to improve
 performance, energy efficiency, and reliability.  For instance,
 various cache replacement policies have been proposed to reduce the cache miss
 rates~\cite{XXX}; numerous prefetching schemes have been proposed to predict
 future cache misses and fetch those in advance~\cite{XXX}; and different memory
 access scheduling schemes have been proposed to reorder concurrent main memory
 requests in order to reduce their average access latency and increase
-their bandwidth~\cite{XXX}.  Although each scheme is effective to
-achieve its own goal but multiple schemes usually work in isolation and
-do not consider other schemes employed in the system.  For example,
-a replacement policy may not consider the impact on the prefetching
-engine or the access scheduler when making the replacement decision.
+their bandwidth~\cite{XXX}.
+
+Although each component of those types can work
+effectively to achieve its own goal, they usually operate in isolation
+without any explicit coordination in the same system.  For example,
+a replacement policy may not consider its impact on the prefetching
+engine and the memory access scheduler when making the replacement decision.
 This is understandable and desirable in some sense since otherwise
 its design might get too complicated with high implementation cost.
 However, such isolated designs are not globally optimal. To further
@@ -30,23 +33,20 @@ different memory hierarchy levels would be needed.
 In this project, we propose a coordinated cache and memory management framework
 via efficient and elastic machine learning techniques.
 
-a machine-learning based, coordinated
-cache and memory management framework that coordinates the management policies at different
-memory hierarchy levels to achieve the optimal memory performance,
-energy efficiency and reliability.
-Our proposed schemes have two steps. The first one
-is an enhancement to existing systems. It utilizes existing memory
-management schemes, such as the existing cache replacement policies or
-prefetching policies, but add a helper component at each level to
-improve the existing policy's efficiency, such as a prefetching
-filter to filter out some unnecessary prefetching requests.  The helpers
-will use the feedback information from other levels to coordinate
-the memory management.  This approach can limit the design complexity
-since it is an enhancement to existing schemes.  The second approach
-will go one step further and re-design the management schemes at
-each level by considering the status of other levels.  This would lead
-to better performance and energy efficiency but also higher design
-complexity and implementation cost.
+a machine-learning based, coordinated cache and memory management framework that
+coordinates the management policies at different memory hierarchy levels to
+achieve the optimal memory performance, energy efficiency and reliability.  Our
+proposed schemes have two steps. The first one is an enhancement to existing
+systems. It utilizes existing memory management schemes, such as the existing
+cache replacement policies or prefetching policies, but add a helper component
+at each level to improve the existing policy's efficiency, such as a prefetching
+filter to filter out some unnecessary prefetching requests.  The helpers will
+use the feedback information from other levels to coordinate the memory
+management.  This approach can limit the design complexity since it is an
+enhancement to existing schemes.  The second approach will go one step further
+and re-design the management schemes at each level by considering the status of
+other levels.  This would lead to better performance and energy efficiency but
+also higher design complexity and implementation cost.
 
 An important design consideration is how to coordinate the multi-level
 cache/memory management schemes and incorporate the feedback

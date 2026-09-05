@@ -1,0 +1,97 @@
+\section{Proposed Research}
+
+In this section, we will ...
+
+\subsection{}
+
+\subsection{Overview of ML Components for Cache and Memory Management}
+
+% Here memory hierarchy is not the whole hierarchy
+% TODO Move to intro
+%The project will investigate the use of distributed machine leaning components
+%from the last-level cache to the main memory, including hardware cache
+%prefetching.  Those layers together play a major role in memory system
+%performance and energy efficiency. They are also challenging to manage given
+%their ever increasing complexity and the diversity of application demands.
+%Traditional techniques in cache replacement, cache prefetching, and memory
+%access scheduling have been extensively studied, but their gains are increasing
+%diminishing.  The recent advance in ML techniques represents a new
+%and promising approach to further improve cache and memory performance.
+
+%However, there are unique challenges in applying techniques to optimize the
+%cache and memory systems, and more broadly any components inside or partially
+%inside a processor.  The ML component must be lightweight and cost-effective;
+%otherwise, the performance gain can hardly be justified.  The research on
+%performance-oriented NN accelerator, which is the main stream, does not have
+%this constraint.  On those accelerator chips, the majority of the chip area is
+%dedicated to NN acceleration.  By contrast, a processor chip should only budget
+%a small percentage of its chip area for any ML circuits for improving cache and
+%memory performance.  Otherwise, the chip area could be used to increase the
+%cache capacity.  Additionally, the ML circuits must be energy-efficient.
+%High-performance ML accelerator designs, by contrast, tend to be power hungry.
+
+% For large L3 cache, should there be multiple ML components for the
+% cache controller?
+
+%Extensive research has been conducted on conventional hardware techniques for
+%cache and memory management, including cache organization, multi-level cache
+%design, cache replacement policies, cache prefetching, and main memory access
+%scheduling.  Those efforts yielded significant results; however, any further
+%effort is likely to have diminishing returns.  On the other hand, memory
+%performance and memory energy efficiency continue to be a major hurdle for many
+%memory-intensive workloads, even with the tremendous advances in cache capacity
+%and memory data rates.  They must be complemented by more intelligent management
+%techniques.  In fact, the increasing complexity of cache and memory also demands
+%further advances in their management.  ML technique is promising in this regard
+%because it can explore broader feature spaces for performance correlation.  It
+%has been used to improve branch prediction~\cite{} and cache prefetching,
+%showing the potential of ML technique to further improve performance on top of
+%conventional techniques.  However, the use of ML is limited in scope, and the ML
+%circuit design is still primitive.
+
+% ML components should be added to L2 cache controller of each processor core.
+% Assume that the processor has 3 levels of cache.
+
+% Cache replacement, cache prefetching, memory access scheduling
+% In their decision logic.
+% Cache replacement: Affect LRU chain.  It decides by how much a block is prompted.
+% What happens to non-LRU design? Pseudo LRU is OK.
+% What feedback? If a prompted block is hit, then that's a positive feedback.
+%
+% One problem is that the feedback unit is expensive, because the past decision
+% must be memorized. We can use a general structure for sampled memorization.
+% Similar to counting network used in Internet. Each decision is encoded into
+% a binary string, and then selectively memorized by sampling. Thus, the resource
+% spent on feedback will be fixed.
+%
+% Any inexpensive feedback unit design?
+% Sampling? Bloom filter? Pre-generate positive feedback and negative feedback?
+% Cache prefetching: filter prefetching request. Need a feedback unit.
+% In the current design (Texas A&M): check if prefetched block is used,
+% or rejected block is hit. We need new ideas to show this project's value.
+% Memory access scheduling:
+%
+
+% Overview
+
+This project will apply ML techniques broadly to the cache and main memory
+hierarchy by incorporating distributed and coordinated ML components through the
+hierarchy.  It consists of three types of ML components to improve the decision
+logic, specifically for cache replacement, cache prefetching, and memory access
+scheduling.  They are embedded into the corresponding hardware components,
+namely cache controller, hardware prefetcher, and memory controller.  They are
+also connected with each other using the existing connections among those
+components, and are coordinated to improve the learning and inference of each
+other.
+
+\subsection{ML Component for Cache Replacement}
+
+\subsection{ML Component for Cache Prefetching}
+
+\subsection{ML Component for Memory Access Scheduling}
+
+\subsection{Coordination Framework for ML Components}
+
+\subsection{Hardware and Software Coordination}
+
+\subsection{}

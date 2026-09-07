@@ -1,0 +1,1371 @@
+% Title: RAIMD:
+
+\documentclass[11pt]{article}
+\usepackage{latex8}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{url}
+\usepackage{amsmath,amsfonts}
+\usepackage{xspace}
+\usepackage{setspace}
+
+
+% NSF required minimum margin is 1 inch
+\usepackage[margin=1.0in,includefoot]{geometry}
+%\linespread{1.15}
+
+\newcommand{\DDRx}{DDR{\em x}\xspace}
+%\newcommand{\mCore}{{\em m}Core\xspace} \newcommand{\tAA}{$^\text{t}$AA\ }
+%\newcommand{\tWAL}{$^\text{t}$WAL\ }
+\newcommand{\tAA}{tAA\xspace} \newcommand{\tWAL}{tWAL\xspace}
+\newcommand{\tRFC}{tRFC\xspace}
+
+\newcommand{\eg}{e.g.\xspace} \newcommand{\ie}{i.e.\xspace}
+\newcommand{\etal}{et al.\xspace} \newcommand{\naive}{na\"ive\xspace}
+
+\newcommand{\Fig}[1]{Figure~\ref{fig:#1}\xspace}
+\newcommand{\Sec}[1]{Section~\ref{sec:#1}\xspace}
+\newcommand{\Alg}[1]{Algorithm~\ref{alg:#1}\xspace}
+\newcommand{\Tab}[1]{Table~\ref{tab:#1}\xspace}
+\newcommand{\Eq}[1]{Equation~\eqref{eq:#1}\xspace}
+%\newcommand{\Para}[1]{\vspace{0.04in}{\bf #1}\xspace}
+\newcommand{\Para}[1]{\paragraph{#1}}
+
+\newcommand{\comment}[1]{} \newcommand{\note}[1]{[{\em #1}]}
+\newcommand{\ZZ}[1]{[{\em #1}]} \newcommand{\todo}[1]{} \newcommand{\zzc}[1]{}
+\newcommand{\zz}[1]{} \newcommand{\zzcite}[1]{}
+
+% add "C" to section heading \renewcommand{\thesection} {C.\arabic{section}}
+% \renewcommand{\thepage} {C-\arabic{page}}
+
+\makeatletter \newcommand\figcaption{\def\@captype{figure}\caption}
+\newcommand\tabcaption{\def\@captype{table}\caption} \makeatother
+
+\begin{document}
+
+% Proposal Title:
+%\centerline{\large\bf RAIMD: Highly Reliable Memory Architecture for Next
+%Generation Device Technologies}
+%\centerline{\large\bf RAIMD: Versatile and Highly Reliable Memory Architecture
+%for Next Generation Memories}
+
+\begin{center}
+{\Large\bf SHF: Energy-Efficient and Cost-Effective Architecture for
+Highly Reliable Memory Systems with Current and Emerging Technologies}
+\end{center}
+\vspace{0.5cm}
+
+% Here me want to discuss the motivation based on challenges in future memory
+
+\Section{Research Overview}
+
+% DRAM errors call for stronger protection "was getting worse" -- it is too
+% casual Plan: read the papers again and sharpen the writing
+
+Memory reliability has become a severe concern for contemporary memory systems.
+Two large-scale field studies in 2009~\cite{2009-sigm-dram-error} and
+2012~\cite{2012-sc-dram-error} reported that DRAM memories had much
+higher raw error rates than expected.  More importantly, DRAM errors were found
+to be highly correlated. The findings raised a serious question about the
+effectiveness of memory error protection schemes used in product systems,
+because those schemes are designed against random errors.  A later study in
+2015~\cite{2015-asplos-dram-error} not only confirmed the previous findings but
+also showed a worrisome trend of increasingly weakening DRAM reliability because
+of the advance in DRAM fabrication technology.  The technology advance has
+drastically improved DRAM density, bandwidth, and energy efficiency, but
+unfortunately it has weakened DRAM cell reliability because of shrunk cell size.
+
+% DRAM errors causes security issues
+
+The weakening memory reliability also has a serious consequence: it incurs a new type
+of vulnerability in computer security.  The standing out issue is Rowhammer
+attack~\cite{kim2014flipping,mutlu2017rowhammer}, which exploits the weakening cell reliability of high-density
+DRAM devices.  In such an attack, an adversary runs a malicious program to flip
+data bits in memory; and with a carefully crafted program, the adversary can
+obtain privileged access to the system~\cite{Seaborn}.  This is a severe problem and
+surprisingly challenging to address.  Many designs have been proposed, and JEDEC
+has made an extension to the DDR5 standard~\cite{JEDEC:2024}, to address the problem.
+However, it persists and even worsens, because DRAM cell reliability continues
+to weaken as DRAM fabrication technology advances~\cite{Canpolat:hpca25}.  The latter is a
+bless for memory capacity, bandwidth, and energy efficiency, but not for
+reliability.
+
+% Check "standing out" with my new ipad．It's very good.
+
+% What we propose. Stay at high-level to make the picture clear. Save challenges
+% to the next paragraph.
+
+The PI and co-PI propose a new memory architecture, called RAIMD (Redundant
+Array of Independent Memory Device), and will fully investigate the new
+architecture to address those challenges.  RAIMD is similar to RAID (Redundant
+Array of Inexpensive Disks) in organization: memory devices in RAIMD are
+independent with local access scheduling, contain local error correcting codes,
+and may form parity groups for error correction.  It supports strong reliability
+with low cost and very high energy efficiency.  It is also highly flexible: a
+RAIMD memory can be dynamically configured as RAIMD-0, RAIMD-5, RAIMD-6 or other
+variants as done in RAID, with varying ratio of redundancy, to allow trade-offs
+between reliability and cost.  It can offer much higher reliability than ECC
+memory and Chipkill Correct memory for a given storage budget, particularly when
+used with memory devices of weak reliability.
+
+% TODO Must check the term "memory interface protocol" Emerging memory may
+% require more support for reliability
+
+RAIMD is designed for reliability but can also enhance security and support new
+memory technologies.  RAIMD supports strong end-to-end error detection that
+covers memory cells, data bus, address bus, and I/O pins and circuits, which
+prevents Rowhammer attacks from succeeding.  It uses decoupled memory access
+scheduling, which allows memory devices to work semi-independently with the
+memory controller, and thus can easily support devices using NVM (non-volatile
+memory)
+technologies~\cite{Lee:ISCA09,Zhou:ISCA09,Qureshi:ISCA09,Qureshi:HPCA10}.  Those
+technologies have been studied intensively for two decades; and some has been
+tried by the industry in product systems but
+unsuccessfully~\cite{Waddington:memsys19}.  Because of this property, in the
+RAIMD architecture those memory devices can have complex internal circuits to enhance
+their durability and reliability, which are critical to their adoption.
+
+% Now it's time to discuss challenges.  Need to mention memory disturbance
+% errors in previous paragraph
+
+RAIMD is not a trivial migration of RAID to memory.  There is a critical
+difference between memory systems and storage systems: memory latency is
+measured in nanoseconds, while disk latency is measured in milliseconds or at
+least a fraction of milliseconds.  Any increase of memory latency incurred by
+RAIMD could have significant impact on program performance.  We have conducted a
+preliminary study to address the performance concern as well as the energy
+saving potential of RAIMD.  The initial result has been published in a short
+paper~\cite{Wu:cal23}, and a full paper has been submitted and is under review.
+The evaluation shows that the average performance overhead of RAIMD-5, which
+resembles RAID-5 in organization, is only 3.8\% over a DDR5 baseline for SPEC
+CPU2017 and CPU2006 workloads.  It reduces the average memory energy consumption
+by 25.9\% from the DDR5 baseline, which has no ChipKill protection.  When
+compared to a ChipKill scheme for DDR5, it reduces the average energy
+consumption by 69.4\%.  The design is well crafted to eliminate any increase of
+memory read latency and to minimize the increase of memory traffic.  It contains
+a set of holistic changes to memory controller, device interface, memory command
+protocol, memory address mapping, and last-level cache.
+
+RAIMD has several other advantages as a general-purpose, energy-efficient, and
+highly reliable memory architecture.  It allows a low-cost implementation
+suitable for personal computers and mobile devices: a RAIMD memory can be
+constructed using a small number of memory devices, while a conventional
+ChipKill design requires many memory devices to be activated to serve one
+request.  Its high energy efficiency is not only desired on those computers but
+also on servers.  It is also highly configurable: a RAIMD memory can be
+configured as RAIMD-0 (no error protection), RAIMD-5, RAIMD-6 (double ChipKill
+protection), or other variants; and the configuration is done at booting time,
+not manufacturing time.  Therefore, it fits computer systems with very low to
+very high reliability requirements, and can be re-configured to just meet
+the reliability target.
+
+% TODO Discuss what is decoupled memory access scheduling FIXME We need to
+% discuss more about the proposed research in a smooth way
+
+We will conduct a comprehensive research to investigate the full potential of
+RAIMD.  In particular, we will study RAIMD with decoupled memory access
+scheduling ({\em decoupled scheduling} in short), which has not yet been covered
+by the preliminary study.  We believe it is the key to fully addressing the
+growing concern on memory reliability and durability, as well as to explore the
+opportunities of adopting new memory technologies.  With decoupled scheduling,
+the memory controller issues activate, read/write, and other miscellaneous
+commands to memory devices, but memory devices can schedule the actual timing of
+the corresponding memory operations.   By comparison, with rigid scheduling used
+in current memory systems, memory devices must respond to the memory controller
+as slave devices.  The change is small but important: A memory device can now be
+contain customized enhancement circuits to address any reliability weaknesses
+caused by a particular memory technology or fabrication process.  The problems
+of DRAM disturbance errors and PCM (Phase-Change-Memory) write endurance can be
+fully addressed in this approach.  High-density devices with weakened
+reliability can be further enhanced with strong ECC code embedded in the
+devices.  When combined with the RAIMD organization, a designer can build a
+highly reliable memory system with high energy efficiency and low cost.
+
+A key issue, and the major challenge, is the scheduling of memory bus usage
+because the memory controller no longer has the full control of memory devices.
+We have conducted another preliminary study on decoupled scheduling for a system
+of hybrid DRAM and NVM memory modules~\cite{Trung:pomi}.  The result is
+promising: it shows that decoupled scheduling may approach, and even exceed, the
+performance of rigid, centralized scheduling.  However, decoupling in RAIMD is
+more challenging than in a simple hybrid memory system because the timings of
+memory operations in RAIMD will have much higher variance.  We propose to use
+perceptron-based neural model to assist decoupled scheduling.  Neural model
+based prediction has been shown to be effective for improving the accuracy of
+branch prediction~\cite{Jimenez:hpca01,Bhatia:isca19} and memory
+prefetching~\cite{Garza:isca19}.  In RAIMD, it will be used to predict memory
+operation completion time (and device ready time) with decoupled scheduling,
+which we believe is a sound and promising approach.
+
+% double check term "PNN" and perceptron-based neural network
+
+%%% This paragraph is too overwhelming -- it is good, but overwhelming.
+%
+%Decoupled scheduling is a major deviation from centralized scheduling in a
+%conventional memory architecture, and the concern that it may not be as
+%efficient as centralized scheduling in memory bandwidth utilization.  We have
+%conducted a preliminary study on a different form of decoupled
+%scheduling~\cite{} for a hybrid DRAM and NVM memory system.  The result is
+%promising: it shows that in a hybrid DDR{\em x} DRAM and NVM memory, decoupled
+%scheduling performs very close to centralized scheduling.  The design of
+%decoupled scheduling for RAIMD, however, is more challenging than that because
+%the timing variance in a RAIMD system is expected to be much higher than that
+%in a simple hybrid system.  We propose to use perceptron neural network (NN) to
+%improve the efficiency of decoupled scheduling.  Perceptron NN has been shown
+%to be effective in branch prediction and memory prefetching.  We believe it is
+%promising in RAIMD based on our experience in the preliminary study.
+
+The research agenda is as follows:
+
+\begin{itemize}
+
+\item  To study the integration of decoupled memory access scheduling in the
+RAIMD architecture, and the use of device-specific enhancement circuits to
+improve reliability, security, and durability of memory devices.
+
+\item To study neural model based prediction to improve the performance of
+decoupled scheduling for memory devices of timing diversity.
+
+\item To investigate holistic management of memory reliability, including the
+optimal configuration of global protection and local protection for a given
+storage budget.
+
+\end{itemize}
+
+\section{Proposed Research}
+
+In this section, we first discuss the characteristics of RAIMD, present two
+preliminary studies on a baseline RAIMD design and decoupled memory access
+scheduling, respectively, and then discuss the research agenda items in detail.
+
+% Plan: Use the diagram and discussions from CAL paper and TPDS submission
+\subsection{Characteristics of RAIMD}
+
+RAIMD has a distinguishing characteristics, when compared to conventional memory
+architecture such as DDR4 and DDR5, that a memory request is served by a single
+memory device rather than a rank of devices.  A memory block of LLC block size,
+typically 64 bytes or 512 bits, is mapped to a single device.  It drastically
+reduces memory operational energy, i.e., energy spent on precharge and
+activation, at the cost of increased data transfer time.  For example, in a
+DDR5-6400 system using x8 devices (with 8-bit data I/O), a memory block of 64
+bytes is mapped to four memory devices, and it takes 2.5 ns to transfer the
+block on memory bus.  In an equivalent RAIMD system, the block is mapped to a
+single device, and thus it takes 10 ns to transfer the block on memory bus.
+However, the latency of an idle memory is typically dozens of nanoseconds, and
+for memory-intensive workloads the dominant portion of memory latency is
+queueing delay.  Thus, the increase of data transfer time may only have a
+moderate impact on performance.  In RAIMD, a memory device is effectively a
+memory module by itself, and thus memory-level parallelism increases
+substantially, which may offset the performance loss due to increased memory
+latency.
+
+Because of this characteristics, a RAIMD memory system is flexible in its
+organization because it can be configured dynamically during system booting
+time.  Therefore, such a system allows trade-offs among performance, energy
+efficiency, cost, and reliability.  To one extreme, it can be configured as
+RAIMD-0 (no redundancy) if reliability is not a concern for a given workload.
+To another extreme, RAIMD-1 (mirroring) offers very high reliability at the cost
+of reduced memory capacity.  In practice, RAIMD-5 (with single parity block per
+group) and RAIMD-6 (with double parity blocks per group) are of great interest
+because they provide high reliability with relatively low cost.  The
+parity-to-data ratio of them can be adjusted, giving another option of making
+trade-off.  After all, all those RAIMD variants are highly energy-efficient when
+compared to a conventional memory architecture of wide rank.
+
+A memory device in RAIMD is required to have extra bits per memory block to
+store an error detecting code (EDC).  The requirement is consistent with the
+JEDEC DDR5 standard, which requires extra on-die ECC bits in DDR5 devices for
+local error detection and correction.  However, EDC in RAIMD is generated and
+checked by the memory controller.  Therefore, it is capable of end-to-end error
+detection that protects memory cells, I/O pins and circuits, data bus, and
+address bus.  Note that for address bus error detection, memory address bits
+will be combined with data bits to generate the EDC.
+The memory block size in RAIMD is the same as the LLC block size,
+which is 512 bits (64 bytes) for most contemporary processors.  Because of the
+relatively large block size, EDC in RAIMD is highly efficient.  For example, a
+32-bit EDC can provide strong error detection for a 512-bit block, with a
+moderate storage overhead of 6.25\%.  A memory device may also contain
+additional ECC bits for local error correction (as DDR5 does), which further
+enhances the reliability.  We will discus more in
+Section~\ref{sec:holistic}.
+
+\subsection{Preliminary Studies}
+
+We have conducted two preliminary studies related to the proposed RAIMD
+architecture.  The first study is about a baseline design of RAIMD and its
+performance and energy efficiency.  The result is promising: it shows
+that with careful design optimizations, RAIMD can support ChipKill protection
+with much higher energy efficiency than conventional memory architecture with a
+very moderate performance loss (less than 4\%).  The second study is related to
+decoupled scheduling of memory access, which is also promising: it shows
+decoupled scheduling for DRAM memories can achieve the same or even slightly
+better performance than conventional, rigid memory scheduling.
+
+\subsubsection{Baseline RAIMD Design}
+
+\paragraph{Overview.} We have conducted a baseline design of RAIMD based on
+DDR5-6400 memory devices.  The RAIMD design contains two critical features to
+maintain high memory speed and to reduce memory traffic.  A critical design
+issue in RAIMD is the memory layout and address mapping: any complex address
+mapping from the physical address to the device address (with channel, rank,
+bank, row, and column components) may significantly increase memory latency.
+Note that it is not an issue to a storage system, as the latency of a storage device is
+orders of magnitude longer than that of a memory device.  Furthermore, a system
+designer may prefer a particular address mapping scheme for a sound reason; for
+example, to use page-interleaving for spatial locality, cacheline-interleaving for
+parallelism, or a variant of their combination for a balance.  This requirement further
+complicates the address mapping in RAIMD. Second, since RAIMD uses parity blocks
+for error correction, the increase of memory traffic for parity block access is
+a concern.  RAID-5 has the small write problem~\cite{RAID}: a write may incur
+four disk accesses, namely data block read, parity block read, data block write,
+and parity block write.  Fortunately, we have found a solution that not only
+eliminates parity block reads (except during error correction) but also
+significantly reduces parity writes, which we will discuss in detail.
+
+\paragraph{Address mapping and memory layout.}
+
+% Can we claim this is our scheme?
+
+\begin{figure}[!t] \centering \begin{subfigure}{0.4\textwidth}
+\includegraphics[height=4cm]{./graphs/mapping.pdf} \subcaption{Address mapping
+and memory layout in the physical address space.} \label{fig:mapping}
+\end{subfigure} \hspace{0.5cm} \begin{subfigure}{0.55\textwidth}
+\includegraphics[height=4.5cm]{./graphs/organization_no_mapping.png}
+\subcaption{Memory layout in the device address space.} \label{fig:raimd_layout}
+\end{subfigure} \caption{The framework of address mapping and a generic memory
+layout.}
+%TODO In the left figure, top: change Data Block to Memory Block.
+\label{fig:raimd_overview} \end{figure}
+
+RAIMD solves the problem by using dual address mappings for data blocks and parity blocks, as
+shown in Fig.~\ref{fig:raimd_overview}.  Data blocks and parity blocks are
+mapped to separate regions of the physical address space with different prefix
+address bits.  The address mapping for data blocks only involves bit selection
+logic and optionally simple logic operations such as XORing.  Thus, this is no
+extra latency for data block access compared to a conventional memory system.
+The address mapping for parity blocks, on the other hand, is complex to achieve
+a desired block layout.  A Parity Address Mapping logic is applied to the
+physical memory address before it is mapped into the device address space
+(Fig.~\ref{fig:mapping}).  This logic may add a delay of multiple
+nanoseconds to parity block access, but it is not on the critical path of
+program execution and thus has negligible performance impact.
+
+\begin{figure*}[!t] \centering
+\subfloat[\label{fig:raimd5_address_mapping_stripe}]{%
+\includegraphics[width=0.5\linewidth]{./graphs/address_mapping_a.pdf}}
+\subfloat[\label{fig:raimd5_mapping_conventional}]{%
+\includegraphics[width=0.5\linewidth]{./graphs/classic_mapping.pdf}} \caption{
+(a) The memory layout of a particular RAIMD-5 memory system for balanced
+row-buffer locality and bank-level parallelism. (b)  The block layout of RAID-5
+for comparison.  } \label{fig:raimd5_address_mapping} \end{figure*}
+
+
+%\begin{figure}[!t] \centering
+%\includegraphics[width=0.48\textwidth]{./graphs/stripe_parity_group.pdf}
+%\caption{Relationship of stripes and parity groups in the linear address space.
+%Seven data blocks and one parity block belong to the same parity group.  }
+%\label{fig:stripe_parity_group} \end{figure}
+
+Fig.~\ref{fig:raimd5_address_mapping} shows the detail of address mapping and
+memory layout for a particular RAIMD-5 memory system of 1:7 parity-to-data ratio.  It
+uses a stripe-based address mapping scheme to balance row-buffer locality and
+bank-level parallelism.  A stripe is consecutive $K$ blocks in the physical
+address space, where $K = 4$ by default.
+Fig.~\ref{fig:raimd5_address_mapping_stripe} shows the layout of data stripes
+and parity stripes, where $S$ represents a data stripe and \textit{PS}
+represents a parity stripe.  For example, $\textit{PS}_0$ is the parity stripe for $S_0$ to
+$S_7$, $\textit{PS}_1$ is for $S_7$ to $S_13$, and so on.  As the figure shows,
+the data and parity stripes in any parity group are evenly distributed to all
+devices, and thus there is no bottleneck for parity accesses.  The RAIMD-5
+layout is revised from the conventional RAID-5 layout, as shown in
+Fig.~\ref{fig:raimd5_mapping_conventional}, by moving the parity stripes down
+to the bottom. This movement simplifies the physical-to-device address mapping.
+It does not incur any performance or energy penalty in
+a memory system; that may not be true to a storage system of mechanic disks.
+
+With the above address mapping and memory layout, RAIMD can continue to use
+conventional physical-to-device address mapping.  It incurs no extra delay on
+data block access.  Parity block access, on the other hand, has an extra delay
+because of the Parity Address Mapping (PAM) logic (Fig.~\ref{fig:mapping}), which
+maps a data block address to the associated parity block address.  The logic may
+involve shift, module, division, and multiplication logics and may take multiple
+clock cycles to complete.  However, this extra delay is not on the critical path
+of the program execution, and thus it has negligible impact on performance.
+Thus, this framework allows a designer to use a complex address mapping to
+achieve a desirable memory layout, e.g., for a different parity-to-data ratio, stripe
+size, or having double parity blocks in a parity group.  A memory controller
+may have multiple PAM logics to support different memory layouts.
+
+\paragraph{Parity update mechanism.}
+
+\begin{figure} \begin{subfigure}{0.45\linewidth} \centering
+\includegraphics[height=3cm]{./graphs/raim_cache.png} \subcaption{Overview of
+the parity update process.} \label{fig:raimcache} \end{subfigure} \hspace{1cm}
+\begin{subfigure}{0.45\linewidth} \centering
+\includegraphics[height=4cm]{./graphs/io_gating.pdf} \subcaption{Modification to
+memory I/O circuit (circled).} \label{fig:io_gating_parity_update}
+\end{subfigure} \caption{Parity update mechanism in RAIMD.}
+\label{fig:parity_update} \end{figure}
+
+The second critical issue in RAIMD is the increase of memory traffic for parity
+block access.  RAIMD uses a novel parity update mechanism to reduce this
+overhead, as shown in Fig.~\ref{fig:parity_update}.  We assume that the LLC is a
+write-back cache, which is true for contemporary high-performance processors.
+The LLC and the memory controller are extended to support a new request called
+parity update, which is treated as a special type of write request.  Upon a
+dirty write-back to the LLC, the XORed difference $\Delta D$ of the old data and
+the new data is generated (steps \textcircled{1} and \textcircled{2}), and the
+physical address of the associated parity block is generated
+(Fig.~\ref{fig:mapping}).  A parity update request is then generated and
+inserted into the write queue of the LLC.  The data block will be written back
+to cache (step \textcircled{3}).  Independently, $\Delta D$ will merged into a
+cache block for the parity block address if it exists; or written to a newly allocated
+cache block if otherwise (step \textcircled{4}).  The parity block will cause a
+parity block update to memory when it is evicted from LLC.
+
+To serve a parity update request to the memory, the memory controller may issue
+up to three memory commands, namely precharge, activate, and parity update.
+Memory devices need to support a new command called parity update.  Its timing
+is the same as the write command.
+Fig.~\ref{fig:io_gating_parity_update} shows the circuit modification inside a
+DDR5 x8 device to support the new command.  We have done a thorough circuit
+analysis and concluded that the change does not affect the timing parameters
+related to the write command.  That is because in modern memory access
+scheduling, there is a sufficient time interval between the arrival of a write
+command and the arrival of the write data such that the added circuit does not
+increase the critical path delay (except for the delay of the XOR gate, which is
+negligible).
+
+With this parity update mechanism, parity read traffic is eliminated (except
+during error correction), and parity write traffic is significantly reduced
+because of caching.  Our performance evaluation confirms that parity traffic is
+very moderate; the average increase of memory traffic is less than 5\% over the
+baseline, and the average increase of cache misses is less than 2\%.  It is
+worth mentioning that a similar idea called partial parity caching has been
+proposed and studied to improve the performance and lifetime of flash-based
+RAID-5 systems~\cite{flash_raid, partial_parity_cache}, but the implementation in
+RAIMD is very different.
+
+\paragraph{Evaluation Results}
+
+We have evaluated the performance and energy efficiency of multiple RAIMD
+variants using gem5~\cite{binkert2011gem5} and SPEC CPU2006 and CPU2017
+workloads.  We focused on a particular RAIMD-5 configuration of 1:7
+parity-to-data ratio based on x8 DDR5-6400 devices.  It uses a 32-bit error
+detection code per 512-bit data block to detect errors.  The code is generated
+and checked by the memory controller and stored in memory device, and therefore
+the detection covers memory cells, bus, and I/O circuits.  The result shows that
+RAIMD-5, which supports ChipKill protection, reduces memory energy consumption
+by 25.9\% on average over a DDR5 baseline with no ChipKill protection.  It
+incurs a moderate performance loss of 3.8\% on average, which is mostly caused
+by increased data transfer time in memory access latency.  When compared to
+unity ECC~\cite{unity_ecc}, a recent DDR5-based ChipKill design for servers,
+RAIMD-5 reduces memory energy consumption by 69.4\% on average.  It is not a
+surprise, because unity ECC has to distribute the content of any ECC word to ten
+devices, and thus every memory access involves ten devices.  In general, parity
+block based error correction is more efficient than ECC-based one for memory,
+because the former can use only one device to serve a memory request.  The total
+storage overhead ratio of the above RAIMD-5 configuration is 20.54\%, with
+14.29\% for parity and 6.25\% for error checking code.  By comparison, the
+storage overhead ratio of unity ECC is 31.25\%, with 25\% for extra ECC devices
+and 6.25\% for on-die ECC.
+
+A RAIMD system can be dynamically configured during system booting time as long
+as the PAM logic supports the needed address mapping. Our evaluation shows that
+a RAIMD-6 configuration, which supports double ChipKill protection, reduces
+memory energy consumption by 23.7\% and incurs a performance loss of 4.3\% when
+compared to the DDR5 baseline.  A server computer may opt to use RAIMD-6 for the
+extra reliability.  A consumer-level computer, on the other hand, may use
+RAIMD-5 with a smaller parity-to-data ratio to lower the storage overhead and
+thus reduce the cost.
+
+\subsubsection{Decoupled Memory Access Scheduling}
+
+The second preliminary study focused on decoupled memory access scheduling
+(decoupled scheduling in short thereafter) to support a heterogeneous memory
+system.  In a conventional memory system, the memory controller conducts
+centralized scheduling of memory operations, including precharge, activate,
+read/write, auto-refresh, and other operations.  All memory devices behave as
+slave devices to the memory controller.  This was necessary because it avoids
+memory bus conflict and simplifies device circuit design.  However, it is severe
+limitation to the adoption of emerging, non-volatile memory technologies,
+including PCM (Phase-Change Memory), STT-RAM (Spin-Torque-Transfer RAM), ReRAM
+(Resistive RAM), and MRAM (Magnetic RAM).  They are promising
+alternatives to DRAM, but they behave differently and require careful management
+for longevity, reliability, performance, and/or energy efficiency.  It is almost
+infeasible for a memory controller, which is an integrated part of a processor,
+to support those diverse technologies using centralized scheduling of memory
+operations.
+
+We have proposed a form of decoupled scheduling called POMI (POlling-based
+Memory Interface)~\cite{Trung:pomi}.  It is an improved design over UniMA, an earlier
+design of decoupled scheduling by the co-PI~\cite{Fang:pact11}.  It is also closely related
+to Twin-Load~\cite{Cui:memsys16}, which supports a hybrid memory system of two types of
+memory modules with different latencies.  POMI utilizes a device-specific buffer
+chip per memory module to implement a polling based memory bus protocol.  The
+buffer chip receives read and write requests from the memory controller and
+performs local scheduling of device-specific operations, including precharge,
+activate, read/write. The memory controller conducts global scheduling of read
+and write requests and no longer tracks the status and ongoing operations at
+every memory module.  The design not only reduces the complexity of the memory
+controller, but more importantly allows it to interoperate with memory modules
+using diverse technologies.
+
+Decoupled scheduling, however, requires a new mechanism to avoid bus conflict. A
+new polling-based is proposed to communication between memory modules and the
+memory controller.  When receiving a read request from the memory controller,
+the buffer chip of the target memory module sends a feedback with an estimated
+ready time.  The memory controller schedules the bus usage, and it may
+send a transfer signal, which indicates bus availability, to a memory module
+based on its estimated completion time.  The latter may perform data transfer
+after receiving the transfer signal, if the data is ready.  Otherwise, if the
+approximation is wrong, it sends another feedback with a new estimated
+completion time.  The evaluation shows that POMI can actually improve the
+average performance of memory-intensive workloads by 3.7\% for a hybrid memory
+system of both DRAM and PCM.  We found that polling adds an average time of 4.1~ns
+to memory latency, but it is more than offset by increased parallelism in
+memory modules because of local scheduling.
+
+The POMI design shows the potential of decoupled scheduling, but it may not be
+migrated to RAIMD directly.  In RAIMD, local scheduling will be implemented into
+memory devices, not in a separate buffer chip.  Memory device design is very
+sensitive to cost, and thus a more lightweight design is needed.
+
+\subsection{Decoupled Scheduling in RAIMD}
+
+\paragraph{The Mechanism.}
+
+\begin{figure}[!t] \centering
+\includegraphics[width=0.7\textwidth]{./graphs_new/device.pdf}
+\caption{High-level view of the internal structure of a memory device with local scheduling.}
+\label{fig:device}
+\end{figure}
+
+Decoupled scheduling is critical to the proposed RAIMD architecture.  It allows
+the local enhancement for error protection and support for heterogeneous memory
+technologies.  Fig.~\ref{fig:device} shows a high-level view of a generic
+memory device in RAIMD with local scheduling and enhancement circuits.  The
+memory controller issues three types of commands to a memory devices, namely
+activate, read/write, and inquiry. The former two commands play the same roles
+as in DDR4/DDR5 memories: an activate command moves a row of data to the row
+buffer, and a read/write command causes the read/write of a memory block from/to
+the row buffer.  The read/write command contains a bit to indicate if the memory
+bank should be closed afterwards.  The inquiry command is new, with which the
+memory controller may inquire if an activation has completed, if read data is
+ready in the bank, if the bank is ready for incoming write data, and other
+conditions.
+
+Local scheduling is lightweight: its essential role is to decide the timing of
+memory operation for each command at each bank.  It also responds to the inquiry
+command.  The schedule logic maintains the status of each bank, enforce memory
+timing requirements (which decides the start time of an operation), and tracks
+the completion of the ongoing operation.  In other words, the memory controller
+schedules the commands to devices, and a device schedules the timing of the
+corresponding operations.  The memory controller schedules the bus usage to
+avoid bus conflict.  It may only send a read command to a device if the data is
+ready in the row buffer, and a write command if the row buffer is ready to take
+on the incoming data.  Finally, local scheduling logic also schedules other
+operations not directly related to memory requests, including refresh for DRAM
+devices.
+
+The lightweight design ensures the cost effectiveness and operational efficiency
+of memory devices.  There is no additional data buffer or queue, which would be
+expensive and hurt energy efficiency.  Note that the design is different from
+POMI: the buffer chip of POMI is a separate chip and schedules memory commands
+to serve requests. In RAIMD, the latter is still the role of the memory
+controller.  The local scheduling logic will be implemented as a small state
+machine. The cost is small in today's memory devices, whose I/O circuits are
+already a significant part of the chip area.  The memory controller is also
+simplified, as it no long tracks the status and ongoing operations of all memory
+devices.  That can be costly if a memory controller has to support various
+memory technologies.  It is worth mentioning that memory controllers are
+commonly embedded into processor chips, and thus this issue actually affects the
+interoperability of processor chips and memory devices.
+
+Decoupled scheduling may have a moderate impact on performance because the
+inquiry and feedback process will add a delay to memory access latency.  Our
+preliminary study on decoupled scheduling, however, indicate the impact is can
+be offset by increased memory parallelism, and decoupled scheduling may even
+improve performance.  With decoupled scheduling, a memory command can be sent to
+the target memory device as soon as it is decided and the command/address bus is
+ready.  With rigid scheduling, the memory controller must make sure the device
+will be ready for the operation when it receives the command (there are a number
+of timing constraints), otherwise it has to delay the command.  The proposed
+research will give a quantitative answer to this question.
+
+\paragraph{Local enhancement circuits.}  With decoupled scheduling, memory
+devices can have device-specific and technology-specific enhancement circuits
+for various purposes.  For DRAM devices, those may include efficient DRAM
+refresh, Rowhammer defense, and local error correction.  For NVM devices, those
+may include wearout management, cell fault tolerance, and enhanced error
+correction.  Those issues are not directly related to reliability, but they are
+important and can be addressed in the RAIMD architecture.
+
+DRAM refresh is increasingly a concern to the performance and energy efficiency
+of high-capacity DRAM devices because more and more DRAM rows have to be
+refreshed in DRAM refresh cycle, which is 64 ms under normal temperature by the
+JEDEC standard.  A study has shown that, for memory-intensive workloads, DRAM
+refresh energy consumption can reach 50\% of the entire memory energy
+consumption, and the system performance may degrade by up to
+30\%~\cite{Bhati:isca15}.  An promising approach is retention-time aware DRAM
+refreshing~\cite{hamamoto1998retention,liu2012raidr,Liu2013,Patel2017}, which refreshes strong and weak rows at different rate.
+Most DRAM rows are strong rows, with retention time much longer than 64 ms.  The
+problem in a conventional memory system, however, is that the memory controller
+has to manage the extra complexity and schedule fine-grain refresh commands to
+all memory devices.  In RAIMD, it can be efficiently implemented as a local
+enhancement circuit, which can maintain a record of a small number of week rows
+(by profiling at booting time) and issue the fine-grain refresh commands
+locally.  Because of decoupled scheduling, those locally issued refresh commands
+will not cause any hard conflict with the incoming commands from the memory
+controller.
+
+DRAM Rowhammer attack~\cite{kim2014flipping,kim2020revisiting} is increasingly a security concern
+as DRAM manufacturing moves to more advanced fabrication technology.  In this
+attack, an adversary may flip bits in a DRAM row by frequently accessing its
+neighbor rows to cause disturbance errors.  Many solutions have been
+proposed~(\cite{aweke2016anvil,you2019mrloc,wang:iccd21} for a few examples), but they incur non-trivial performance
+and energy overhead and are still not strong enough.  A new extension of JEDEC
+DDR5 standard has introduced an optional Rowhammer mitigation framework called
+Per Row Activation Counting (PRAC)~\cite{JEDEC:2024}, which embeds per-row
+activation count in DRAM device and uses a special RFM (refresh management)
+command.  However, a recent study has found the performance loss of PRAC can
+reach over 80\% for DRAM devices of very low disturbance
+threshold~\cite{Canpolat:hpca25}.  The cause is mostly the inefficiency of the
+memory controller issued RFM command: it may block a memory bank for hundreds of
+nanoseconds.  In RAIMD, the refresh management can be done by a local
+enhancement circuit with much higher efficiency.  A local enhancement circuit
+can issue the RFM command, and each instance of refresh management can be
+fine-grain and take much shorter time.  Again, because of local scheduling,
+locally issued RFM commands will not cause any hard conflict with memory
+controller issued commands.
+
+Wearout management is an important issue to NVM devices.  Many such designs have
+been proposed.  For example, an NVMD may contain an SRAM cache to reduce NVM
+writes, bit rotating design for wearout leveling, fault tolerant circuits to
+handle hardware errors, among many other design
+ideas~\cite{Lee:ISCA09,Zhou:ISCA09,Qureshi:ISCA09,Qureshi:HPCA10}.  In a
+conventional memory system with rigid scheduling, it is infeasible to have a
+memory controller to support various NVMDs of those techniques, which requires
+the memory controller understand the internal of each device type.  In RAIMD,
+the wearout management can be implemented as a local enhancement circuit, which
+schedules those operations when needed.  Those operations, when ongoing, may
+delay activate and read/write operations, but again they will not cause a hard
+conflict in the scheduling.
+
+We will study the integration of those designs into RAIMD as local enhancement
+circuits.  Our focus is not on the circuit designs themselves, but on the
+efficiency of the integration and the performance impact.  Some of those designs
+may cause a high variation to operation completion time, which is a concern to
+the overall performance of the baseline RAIMD.  We continue to propose neural
+model based prediction to address this issue.
+
+% Write a paragraph about DRAM refreshing and Rowhammer attack
+
+% Write a paragraph about rowhammer attack
+
+% Write a paragraph for NMV fault tolerance
+
+% TODO discuss more about rowhammer, PRAC, and RFM
+
+\subsection{Neural Model Based Prediction for Decoupled Scheduling}
+
+The inquiry and feedback process of decoupled scheduling adds a delay to memory
+access latency, which we predict is a concern for memory devices with advanced
+enhancement circuits.  We call them advanced devices thereafter.  It is unlikely
+a concern for simple devices as our preliminary study~\cite{} shows.  However,
+advanced devices may have much higher timing variation in their operations than
+simple devices.  For example, a DRAM device with Rowhammer defense will trigger
+internal target refreshes, which may block normal operations (activate,
+read/write, and associated precharge).  An NVM device with wearout leveling
+circuits may trigger internal data movement, which may block normal operations
+temporarily.  Even for simple devices, internal DRAM refresh may cause delay to
+normal operations, which was not considered in the preliminary study as it uses
+centralized scheduling for DRAM refreshes.  As the result, the overhead from the
+inquiry-and-feedback process will increase.  The impact will be quantified in
+the proposed research, but new methods should also be investigated.
+
+\begin{figure}[!t] \centering
+\includegraphics[width=0.7\textwidth]{./graphs_new/neural_model.pdf}
+\caption{A high-level scheme of NM-RTP (neural model based ready-time
+prediction) for RAIMD.}
+\label{fig:neural_model}
+\end{figure}
+
+To improve the accuracy of ready-time prediction (RTP), we propose to use neural
+model based read-time prediction (NM-RTP) in RAIMD.  Neural model with online
+learning has been used successfully in branch prediction~\cite{} and memory
+prefetching~\cite{}.  We are also studying the use of a perceptron-based neural
+model to improve the accuracy of memory prefetching using memory-side
+information~\cite{}.  We believe a good neural model, particularly
+perceptron-based, is promising to improve RTP accuracy, but it has to be done
+carefully.  Fig.~\ref{fig:neural_model} illustrate the NN-RPT scheme that we
+propose.  The ``Inquiry*'' signal includes activate, read/write, and inquiry
+commands, for all of which the device will send back a feedback.  The feedback
+includes an estimated ready time and a feature value, the latter of which will
+be used as a device input to the neural circuit.  A memory device contains a
+circuit for device-specific feature generation, which is expected to have a good
+correlation with the actual ready time.  It should indicate how reliable the
+estimated ready time is, and provide a hint about the actual ready time if the
+estimate is wrong.  The neural circuit will learn from all the feedbacks from
+the device, and then make a best prediction of the ready time, which assits the
+memory controller to schedule memory commands.
+
+The majority of the cost lies in the weight tables of the neural circuit.  It is
+important that the neural circuit is located in the memory controller, not in
+the memory devices.  On the other hand, the circuit of device feature generation
+must reside in the device, and it should be customized for each device type so
+that the feature value is highly correlated to the ready time.  The feature
+generation is important.  For DRAM devices, it can be a hint for incoming or
+ongoing DRAM refresh, Rowhammer defense operations, low-power mode and mode
+switch, and others.  For NVM devices, it can be a hint for incoming or ongoing
+wearout leveling operations, fault tolerance related operations, chance for buffer
+hits (if a performance-enhancing buffer exits), and so on.  The whole scheme is
+a form of distributed learning circuit design: the neural circuit in the memory
+controller carries out most of the learning, and the circuit in the device
+provides its best assistantship.  Finally, the neural circuit may also include
+other inputs, either from the inside of the memory controller or from the
+processor cores, as secondary features.  In the proposed research, we will
+investigate the full detail the NM-RTP scheme, evaluate its performance, and
+optimize it to improve the accuracy.
+
+%\subsection{Holistic Error Protection and Reliability Measurement Methodology}
+\subsection{Holistic Protection and Reliability Measurement Methodology}
+\label{sec:holistic}
+
+RAIMD provides a form of global protection: when an memory error is detected by
+the error checking code, the content of the faulty block is reconstructed by the
+blocks in other memory devices in the same parity block.  It can correct any
+single-block error.  However, given the worsening raw memory reliable, the
+probability of double-block error cannot be ignored, particularly for servers
+that require very high reliability.  RAIMD-6 can correct double-block error, but
+it increases the cost and is less energy-efficient than RAIMD-5.  After all,
+triple-block error may also become a concern for servers, which cannot be
+corrected by RAIMD-6.
+
+RAIMD can be enhanced with local protection by using embedded ECC.  The PI has
+studied embedded ECC for DRAM memory, in which ECC bits are stored with the
+associated data bits in the same DRAM row~\cite{Chen:taco13}.  It is similar to
+on-die ECC of DDR5 but is more advanced.  Embedded ECC has a unique advantage
+over SECDED ECC memory: it can use very long ECC word size.  This is important,
+because the storage efficiency of ECC will increase drastically.  Assume the
+data part of the ECC word is 512 bits, and the BCH code~\cite{} is used as the
+codec.  It takes only 10 ECC bits to correct a single-error, 20 ECC bits to
+correct a double-error, and 30 ECC bits to correct a triple-error.  The storage
+overhead ratio is 1.95\%, 3.90\%, and 5.86\%, respectively.  It is much lower
+than the 12.5\% overhead of SECDED ECC using an ECC word of 64 data bits and 8
+ECC bits, which can only correct single-error.  The BCH circuit can be part of
+the local enhancement circuits.  It is worth mentioning that the ECC word size
+is limited by the row buffer size, not the LLC block size, and thus the data
+part of the ECC word can be increased to 1024 bits or longer for even better
+storage efficiency, though the cost of the ECC circuit will also increase.
+There is a large design space on local error correction, including the choice of
+the codec, the ECC word size, the design of the ECC circuit, and the performance
+and energy efficiency evaluation.  We will fully investigate the design space.
+
+Furthermore, the global protection and local protection together form a type of
+holistic error protection, and they can be balanced to maximize the protection
+strength for a given storage budget.  An uncorrectable error will happen to
+RAIMD-5 if and only if two or more blocks in the same parity group have memory
+faults that cannot be corrected by embedded ECC.  Therefore, the holistic
+protection is much stronger than a baseline RAIMD-5, and it can be more
+efficient than RAIMD-6 in storage overhead and energy consumption.  If extremely
+high protection is required, e.g.~for devices of weak raw reliability, RAIMD-6
+with embedded ECC can also be used.  With the objective to maximize reliability
+for a given storage budget, there is another large design space to explore,
+including the choice of RAIMD-5 and RAIMD-6, the choice of parity-to-data ratio, and the
+choice and configuration of embedded ECC.  We will also fully investigate those
+issues.
+
+Finally, we will study new reliability measurement methodology to evaluate and
+quantify the reliability of RAIMD systems.  It is necessary for searching the
+optimal configuration of the holistic protection, but it is challenging given
+the complexity of RAIMD systems and the complexity of memory fault patterns.  It
+is impractical to use either pure analytical method or pure Monte Carlo
+simulation.  A recent study introduces a new methodology to conduct empirical
+analysis of DRAM fault model; and has developed a fault and error simulator to
+evaluate the effectiveness of existing ECC schemes~\cite{jun:micro23}.  The
+simulation framework runs Monte Carlo trials to evaluate the reliability of ECC
+schemes, using error patterns produced from the fault model.  It is unique in
+that it actually executes the ECC function in the Monte Carlo trials, which
+helps improve the evaluation accuracy for complex ECC schemes.  We plan to
+extend this methodology and the simulation framework to evaluate and quantify
+the reliability of RAIMD systems.  The challenge is that RAIMD systems are much
+more complex than ECC schemes, particularly when local error protection is used.
+Thus, the error patterns must be generated with a sound methodology; otherwise,
+either the Monte Carlo simulation takes excessive time to finish, or the
+reliability measurement will not be accurate.  We will study this methodology in
+depth.
+
+% The case here is different from RAID-5: In RAID-5, a faulty block loses
+% all the data, but in RAIMD that's usually not the case. Therefore,
+% the codec design space is different.
+
+%TODO Check a detail list of memory errors.
+
+\section{Related Work}
+
+\paragraph{ECC and ChipKill Memories} As memory systems become more prone to
+multi-bit errors, various techniques have been proposed and applied to protect
+against memory errors.  Redundant chips can be added to the DIMM to provide
+chip-level or rank-level
+protection~\cite{IBM:whitepaper97,DELL:chipkill00,Intel:note02, ChipKill,
+ddr5_fault_bound, unity_ecc}.  ChipKill has been proposed to correct single-chip
+errors and detect double-chip errors~\cite{ChipKill} by distributing ECC bits
+across multiple memory chips ensuring that a failure in a single chip affects
+only one bit of any ECC word.  However, current schemes for chip-level
+protection either come with high performance overhead or low energy efficiency.
+A recent study proposes Unity ECC~\cite{unity_ecc}, which utilizes Rank-Level
+ECC (RL-ECC) for DDR5 memory.  Two redundant x4 devices holding ECC bits along
+with eight x4 devices holding data bits are connected to a sub-channel.  The
+eight ECC bits along with the 32 data bits are transferred on the 40-bit wide
+data bus to provide rank-level protection.  This will result in high storage
+overhead, 32.8\% with x4 devices assuming on-die ECC bits take up 6.25\% as
+redundant cells~\cite{unity_ecc}.  It also incurs at least 25\% energy overhead
+since each DRAM access will access eight data chips and two redundant chips.
+DDR5 has not yet received a widely accepted ChipKill-level ECC
+proposition~\cite{Row_Hammer_Resilient_DRAM} due to the split channels.  We use
+this design for comparison in our evaluation of RAIMD because it is a recently
+proposed, DDR5-based design.
+
+There are also non-conventional ChipKill correct solutions.  For example,
+LOT-ECC~\cite{Udipi:ISCA12} provides ChipKill correct capability using
+nine-device rank (assuming x8 devices), but with an increased ratio of ECC bits.
+Virtualized ECC~\cite{Doe:ASPLOS10} supports flexible error-correcting codes and
+stores data and ECC bits in separate locations.  As another ChipKill
+alternative, Nair \etal propose XED~\cite{Nair:isca2016} that utilizes on-die
+ECC to detect error and use DIMM-level parity to correct the error in a way
+similar to RAID-3.
+
+\paragraph{RAID-Like memory systems}
+
+There have been several existing studies using redundant memory with RAID-like
+layouts, such as Intel Memory Mirroring~\cite{intel:mirror} with RAID-1 layout,
+IBM RAIM~\cite{IBM:12} with RAID-3 layout, and RAIM5~\cite{RAIM5:17} with RAID-5
+layout. Intel Memory Mirroring stores a backup copy for the entire memory
+channel~\cite{intel:mirror}.  IBM RAIM provides comprehensive error protection
+against channel failures as well as bus failures and full DIMM and chip
+failures~\cite{IBM:12}. However, such strong protection comes with very high
+cost. It uses four memory channels with ECC and one channel with parity data,
+which results in nearly 40\% storage overhead. Each memory read or write
+accesses 256 bytes across five memory channels simultaneously, which has a
+negative performance impact and significant energy overhead.  Furthermore, it
+requires an advanced memory buffer (AMB) to handle the upstream and downstream
+data. Another study named RAIM5~\cite{RAIM5:17} proposed an optimized RAIM
+configuration, which incurs 17\% off-chip traffic overhead with 28\% DRAM energy
+overhead.  Another work named XED~\cite{XED} uses RAID-3 layout.  It can recover
+single-chip failure using the parity data stored in a ninth chip. The chip
+failure is detected by the on-die ECC; and a pre-defined ``catch-word'' is sent
+to the memory controller. As with the other designs, XED consumes more energy
+than conventional memory.
+
+\paragraph{Sub-rank organizations}
+
+The baseline RAIMD design is closely related to sub-rank memory organizations,
+such as Mini-Rank~\cite{minirank} and Multicore DIMM~\cite{SC09}, to achieve
+high energy efficiency.  For instance, Mini-Rank~\cite{minirank} divides each
+64-bit rank into multiple sub-ranks and activates only a sub-rank of devices for
+each request.  The Mini-Rank design does come with a performance penalty because
+the data transfer time for a memory block, typically 64 bytes, is reciprocal of
+the sub-rank size.  Thus, the original Mini-Rank study (based on DDR3-1066)
+found that dividing a rank into two mini-ranks, e.g., four x8 devices per
+mini-rank, achieves the best energy-performance trade-off for most applications.
+However, with the current trend of ever-increasing DRAM data rate, it is now
+feasible to use a sub-rank of a single device, e.g., one x8 device per
+mini-rank.  This change not only further improves energy efficiency but also
+enables error protection by the RAIMD design.  Even though in Mini-Rank, ECC
+bits can be used and are distributed across different mini-ranks as in RAID-5,
+the ECC bits are not embedded with the data bits as on-die ECC, thus each memory
+access will need to access extra chips in one mini-rank, which is not efficient
+and wastes the memory bandwidth.  In RAIMD, we address this issue by using
+parity data to form a RAID-5 like architecture, and on-die ECC to detect errors,
+forming strong error protection and detection against chip failures, but also
+achieving energy efficiency at the same time.
+
+\paragraph{Earlier studies on decoupled memory access scheduling}
+
+Regarding the memory access protocol design, a recent work called
+Twin-load~\cite{Cui:memsys16} allows one processor to support both
+direct-attached and buffer-on-board memory with minimal changes to the existing
+\DDRx protocol by splitting one read request to two loads.  It changes the
+access protocol slightly, but not as comprehensive as the proposed design.  In
+an earlier study, the PIs have proposed a framework, called
+UniMA~\cite{Fang:pact11}, to support heterogeneous memory modules in one system by extending the
+function of bridge chip and offloading the scheduling of device-level operations
+to each memory module.  It uses a token-based protocol for the bus communication
+between memory controller and modules.  However, the bridge chip does not have
+any advanced functionaries, and the access protocol is different and the
+interface is more complex.
+
+
+\section{Results from Prior NSF Support of Last Five Years}
+
+The PI and co-PI have not been supported by NSF for the last five years.
+
+%The PI has been mainly supported by NSF grants ``SHF: Medium: Collaborative
+%Research: Architectural and System Support for Building Versatile Memory
+%Systems", and ``SHF: Small: Enhancing Memory System Dependability by Integrity
+%checking". The objectives are to understand the complex interaction between
+%multicore processors and memory subsystems; to develop architectural and system
+%support for versatile memory systems; and to improve memory reliability. Related
+%publications can be found in~\cite{Mittal:vlsid13,Mittal:iccd13,
+%Chen:iccd13,Lin:tc13,Fang:tc14,Chen:taco13,Mittal:tvlsi13,Chen:isca14,wang:cal19}.
+%Partially supported by the grants, four PhD students have graduated
+%and another three PhD students
+%are working on their dissertations.
+
+%The co-PI has been mainly supported by NSF grants ``CAREER: Scalable and universal
+%architecture for next-generation memory systems" and ``SHF: Medium:
+%Collaborative Research: Architectural and System Support for Building Versatile
+%Memory Systems". The two projects are to develop framework for next-generation
+%memory systems and architectural and system support for versatile memory
+%systems.  The objectives are to improve memory performance and energy
+%efficiency; and to develop the framework to support emerging, diverse memory
+%devices.  Related publications can be found in~\cite{Fang:ics13, Lin:tc13,
+%Fang:tc14, Pourshirazi:ipdps16, Pourshirazi:memsys17, Pourshirazi:date18,
+%Pourshirazi:TODAES,Rafique:icpp18,Rafique:memsys19}.  With the
+%support of the grants, the PI has graduated two
+%PhD students and one master student, and
+%is supporting two PhD students.
+
+\section{Project Management Plan}
+
+The PIs plan to carry out the research with the following three-year plan:
+
+\begin{itemize}
+
+\item {\bf Year 1.\ }
+
+We will focus on decoupled scheduling and NM-RTP.  On decoupled scheduling, we
+plan to do Verilog modeling for the scheduling logic in memory device to verify
+its functional correctness and to evaluate its circuit cost, extend our current
+gem5-based simulation for RAIMD to model decoupled modeling, and run simulation
+to evaluate its performance impact. On NM-RTP, we plan to develop the neural
+model for RTP, do Verilog modeling for the neural circuit in memory controller
+and the feature generation circuit in device, verify their functional
+correctness, and evaluate their circuit cost and performance.  We will prepare a
+paper on decoupled scheduling in RAIMD for conference publication.
+
+\item {\bf Year 2.\ }
+
+We will focus on NM-RTP evaluation, local error correction with embedded ECC,
+and reliability measurement methodology.  On NM-RTP, we plan to extend our
+simulation to model the neural model and its integration into decoupled
+scheduling, and optimize the neural model based on the evaluation result.  On
+the latter two parts, we plan to develop new versions of embedded ECC, develop
+methods to measure their reliability, and study the integration of global error
+protection and embedded ECC.  We will also develop Verilog modeling for embedded
+ECC circuits to evaluate its circuit cost and performance.  On publication, we
+plan to publish two or three conference papers based on the results.
+
+\item {\bf Year 3.\ }
+
+We will focus on holistic error protection and the continuous development of
+reliability measurement methodology.  On holistic error protection, we will
+focus on its integration with embedded ECC and the balance of the two to
+maximize the reliability for a given budget of storage overhead. We will also
+develop new reliability measurement methods to guide and evaluate the
+integration.  On publication, we plan to publish another two or three conference
+papers and prepare for journal publications.  We also plan to finalize and
+publish our Verilog modeling and gem5-based simulation code on GitHub.
+
+\end{itemize}
+
+\section{Education Plan}
+
+
+The educational impact of this project will be significant from the following
+aspects at the public university:
+
+\begin{itemize}
+
+\item{\bf New curriculum development.\ } The proposed research will
+contribute to the current development of new graduate topic classes
+related to memory systems at the Department of Electrical and Computer
+Engineering at University of Illinois Chicago (UIC).  The findings
+and simulation tools developed from this research will be introduced
+in the classrooms in a timely manner.
+
+\item {\bf Undergraduate participation.\ } We will encourage highly motivated
+undergraduate students to participate in the proposed research. The College of
+Engineering at UIC has a summer intern program that encourages undergraduate
+students to work at research labs. We have been actively participating in this
+program.  The students will be selected from undergraduate classes in computer
+organization and architecture, where we are major instructors for those classes.
+
+\item {\bf Woman and under-representative minority student participation.\ }
+University of Illinois Chicago is one of the nation's most diverse public
+research universities and is a federally designated Minority Serving
+Institution.  Being a woman faculty, the co-PI is especially committed to
+increasing the number of women pursuing advanced degrees in computer science and
+engineering. The PI has been working with a woman PhD student in preliminary
+study of RAIMD, have advised multiple undergraduate underrepresented minority
+students.  We will continue to expand outreach efforts to broaden the
+participation of underrepresented minority students in research and higher
+education.
+
+\end{itemize}
+
+\section{Broader Impact, Dissemination Activities and Technology
+Transfer}
+
+The proposed research will lead to a new memory architecture to build memory
+systems that are highly reliable, energy-efficient, and cost-effective.  It
+works for all general-purpose computers, including servers, personal computers,
+and mobile devices.  It is also promising for emerging memory technologies, as
+those technologies tend to be less reliable than current DRAM technology.  In
+the long run, the research will have a major impact on the design of computer
+systems.  The proposed educational component will enrich computer system
+education related to memory system design for both undergraduate and graduate
+students.
+
+The results of this project will be widely disseminated to the research
+community as well as practitioners through (i) technical publications in high
+quality journals/conferences and presentations at relevant conferences; (ii)
+open sourcing of the source code of our simulation tools; and (iii) tutorials on
+these techniques at conferences and companies that have related business.
+
+This proposed research is of great practical interest to the industry.  Our past
+research and designs on memory systems have been adopted in processors and
+chipsets~\cite{zhang:micro00}; and we expect effective technology transfer for
+the proposed research.
+
+\newpage \renewcommand{\thepage} {\arabic{page}} \setcounter{page}{1}
+
+\let\oldthebibliography\thebibliography
+\renewcommand{\thebibliography}[1]{%
+  \oldthebibliography{#1}%
+  \setlength{\itemsep}{1.5ex} % Increases space between items
+  \setstretch{1.3} % Increases line spacing within an item
+}
+
+\begingroup
+\setstretch{1.2} % Adjust factor as needed (1.0 = single, 1.5, 2.0)
+
+\bibliographystyle{latex8}
+\bibliography{ref1,ref2,bib/proposal,bib/hpca18-submit,bib/isca14,bib/memguard2,
+bib/memguard2b,bib/medium2,bib/mybib,bib/taco,bib/nas15,bib/related,bib/canary,
+bib/iccd21}
+
+\endgroup
+\end{document}
+
+% FIXME Is it still required this way?
+
+\section{Project Management Plan}
+% FIXME Check current requirement
+
+\section{Education Plan}
+% FIXME Check current requirement
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------
+
+
+Furthermore, emerging memory technologies require much stronger support for
+reliability at architecture/ microarchitecture level.  significantly different
+from  memory organizations designed for DRAMs.  Fig.~\ref{organization}
+contrasts their differences.  In the new organization, each memory device (chip)
+embeds a light-weight memory access scheduling logic to schedule memory
+operations for itself.  The memory controller issues memory access requests,
+instead of memory op devices.  Each device operates independently, yielding high
+memory concurrency.  The interface between the memory controller and memory
+devices is revised to allow variable access latency.  This is a critical
+difference from conventional memory organizations (such as DDRx), because it
+allows a memory device to incorporate circuits to improve performance, energy
+efficiency, reliability, and endurance without violating any timing
+requirements.
+
+This new organization offers several advantages over the conventional E
+organization.  Since a single device serves a memory request, instead of a rank
+of multiple devices, energy efficiency is significantly improved.  Reliability
+tends to be a challenge with narrow memory ranks -- this new organization
+essentially uses very narrow rank of one device per rank.  However, as we will
+show in our preliminary result, it can actually offer very high reliability with
+low cost.  More importantly, it has excellent extensibility to support new
+memory technology and device designs, which is critically important to NVMs.
+The complexity of the internal structures of NVM devices can be hidden behind
+the new controller/device interface, which allows novel designs for improving
+NVM performance, energy efficiency, and write endurance.  Additionally, it will
+also help address the major challenges in contemporary DRAM systems, including
+efficient DRAM refreshing and Rowhammer protection, by allowing efficient
+mechanisms inside DRAM memory devices.
+
+It is not that the new organization lacks its own challenges; however, those
+challenges can be addressed with technology advances and designs.  First of all,
+the new organization requires high-speed (data rate) memory devices; otherwise,
+memory latency will increases substantially.  At this time, it is no longer a
+concern.  In the near future, the data rate of mainstream DDR5 memory devices
+will reach 6400 MT/s.  Our preliminary result shows that with that data rate,
+the performance of 8-bit rank size is very comparable to that of 64-bit or
+32-bit rank size, and the energy efficiency is much better.
+
+The second challenge is how to support memory error protection with narrow rank.
+Conventional schemes use (72, 64) ECC words, which does not fit narrow memory
+ranks.  This is a known issue, and one of the PIs has proposed a solution for
+Mini-Rank~\cite{chen:taco13}.  We further propose RAIM-D (Redundant Array of
+Independent Memory Devices) for SSMD memory system\footnote{It is significantly
+different from previous studies on RAIM~\cite{xx} (see Section~\ref{sec:related}
+for detail).}.  It is similar to the RAID organization for disks, with further
+optimization to avoid the small write issue of RAID-5.  In RAIM-D, each memory
+device detects error by itself, and the correction is done at system level.
+This new organization not only support SECDED (single error correcting double
+error detecting) but also SDDC (single device data correcting).  Our preliminary
+result shows that a SSMD memory system with RAIM-D may incur only xx\% of
+performance overhead but xx\% improvement of energy efficiency.  The result is
+consistent with the trend shown by previous studies~\cite{} on Mini-Rank and
+sub-ranking.  With the high rate of today's device, it is now feasible to use a
+rank as narrow as 8-bit.
+
+The third and the major challenge is to maintain memory channel efficiency while
+allowing operation timing flexibility.  Such a flexibility is the key to utilize
+diverse memory technologies, or even just to hide the increasing complexities of
+DRAM devices~\cite{}.  In such recent designs (some done by the PIs), a memory
+device may send a negative feedback upon a memory command if it is not yet ready
+for the requested operation, with or without extra feedback about the ready
+time.  Those studies have shown that the approach is effective for DRAM
+memories, yielding the same level of memory channel efficiency as conventional
+DRAM designs.  However, an advanced approach is needed for NVM and mixed
+DRAM/NVM memory systems because their latency variant is much higher than DRAM.
+Such an approach may also support advanced DRAM designs to address DRAM
+reliability, DRAM refresh bottleneck and Rowhammer attack.
+
+Additional information can be embedded within the feedback to help the memory
+controller retry at a right time.  Recent studies~\cite{}, including two of the
+PIs, have shown that high channel efficiency can be achieved in DRAM memory
+system of this type.  However, NVM devices with write leveling circuits and
+fault tolerance designs may expose much higher timing variations than DRAM.  To
+address this issue, the PIs propose to use perceptron-based neutral networks for
+the memory controller to predict when a memory device will be ready for a given
+operation.
+
+% operation timing flexibility
+
+% Flex timing Is it still command? Self operated devices? The operation is self
+% scheduled.  For a request, MC sends activate commands, wait for the data to be
+% ready, then sends data requests.  Now there are two commands, activate and
+% data transfer (ACT and DT).  The memory controller knows the bank structure.
+% It activates a bank for a row, and then sends column address.  For a simple
+% device, this is OK.  For a complex device, a memory block could be cached --
+% is that OK? But some devices have narrow banks.  In other words, if a bank is
+% activated with a row, that doesn't mean the data of the whole row is all
+% available.  The reason for this design is efficiency -- there is no need for
+% data buffer, and a device can be almost as cheap as current devices.  On the
+% other hand, a device can also be complex for optimization.  Alternatively: MC
+% sends the full address.  The devices does scheduling... that is complicated.
+% So, what is exactly self-scheduling?  Activate delay is variant, and
+% read/write delay is also variant.  The device accepts command, not request,
+% but its operations have varying delay.  Self scheduled operations?
+% Self-operating? Command has flexible timing, and there is no precharge.  and
+% some commands are self-scheduled. This is complex.
+
+% Recap: Devices receive activate and transfer (read/write) commands. That's all
+% commands supported except configuration.  The device decides timing.
+% Self-timed access? Partially self scheduled is OK, but the name is too long.
+% Activate command: Make a bank ready to read/write a row.  Transfer command:
+% transfer data to a block (column) in the row.  One problem is that, what
+% happens if a bank/row is activated, but not used?  This is not really a
+% problem -- if MC activates another row of the same bank, then the MC should
+% know.  And if the device decides to close the bank, the device should
+% re-activate the same row when a block is requested.  Another issue is that the
+% device doesn't really know if the block is ready or not.  This is less an
+% issue: We can require that any bank has a buffer to hold a single block.  So
+% this issue is fixed.  So, it really about flexible timing -- self-scheduling
+% would be a misleading term.
+
+% major challenge is the scheduling of bus.  Typically non-deterministic
+% scheduling is an issue, but with advance of NN, we may use ML to improve the
+% efficiency.
+
+% Flex-timing devices: It is more about giving device designers the option to
+% optimize devices Flex-timing: Activate has flexible Can data be sent first,
+% and then activate? A single data buffer for data?  Reverse data transfer and
+% activate? Why not reverse? Send data first, and then activate and write.  But
+% that will make the device more expensive, but why not?  For above question: A
+% "minimum" device may not have extra buffer at all -- that's like the current
+% devices. It may reject a TX request unless the data is already in row buffer.
+% But if a device has some additional buffer, it can take a TX request
+% immediately until the buffer is full.
+
+The major challenge of the new organization is that, without rigid timing, the
+memory controller has to predict the completion time of DRAM operations.
+
+-- actually, the latter have a rigid interface such that the memory controller
+must schedule memory operations with precise timing to ensure correctness.
+
+Equally important, this new organization is much more extensible to NVM
+(non-volatile memory) devices than the conventional one.  NVM devices usually
+have internal structures, for example write buffers and write-leveling
+mechanisms, to improve performance and write endurance, and thus are not a good
+fit for conventional memory organization of a rigid interface.
+
+the conventional, rigid memory organization, and this is very compatible with
+new types of memory devices, particularly those non-volatile memory devices.
+
+\paragraph{Overview} In this project, the PIs will investigate machine learning
+throttling techniques for heterogeneous memory systems with a memory access
+protocol of flexible timing.  The research extends from preliminary studies of
+memory access protocols of flexible timing~\cite{}, which is the key to
+utilizing heterogeneous memory technologies including DRAM and NVMs
+(Non-Volatile Memories).
+
+Unlike a conventional memory system, the memory controller of a VDL memory
+system does not track the resources and status inside each memory module.  It
+allows interoperability between processors and a wide range of memory modules,
+including those made by DRAM and NVM technology. This feature is critically
+important to the adoption of NVM technologies, which have a wide range of timing
+parameters and may have complex internal structures for performance, write
+endurance, fault tolerance, and energy efficiency.  The preliminary studies of
+the PIs, as proof of concept, have shown that a VDL protocol performs very
+comparably to \DDRx protocols for DRAM memories.  Further research is needed for
+heterogeneous memories, particularly on those made by NVMs.
+
+% Discuss why machine learning is needed
+In the proposed research, the PIs will study machine learning techniques to
+improve the efficiency of VDL memory systems for a wide range of memory modules,
+made by DRAM, NVMs, and with complex internal structures.  {\bf In such systems,
+it is critical to use ML techniques for the memory controller to gauge the
+internal status of memory modules and then predict the data latencies of pending
+requests}.  A conventional design, which precisely tracks each memory module's
+internal status, will no longer be feasible because of the mounting complexity.
+A VDL memory controller, as proposed, uses machine learning to gauge imprecisely
+the internal status of each memory module and issues memory commands
+accordingly.  It is the imprecise nature of the design that makes it possible
+for a VDL memory controller to work with a wide range of memory modules, without
+the need to know precisely their internal structure and status.  Consequently,
+machine learning plays a critical role in the timeliness of memory commands and
+thus the efficiency of the VDL protocol.
+
+% Discuss some specifics of ML
+The PIs further propose a unique design of distributed ML framework for VDL
+memory systems.  In this framework, memory modules provides rich ML feedback per
+memory command to facilitate machine learning inside the memory controller.
+Those feedbacks give the memory controller {\em hints} about the internal status
+of memory modules that are strongly correlated to memory efficiency.  The
+feedback is memory module specific and thus can be customized by the module
+designers.  Coupled with machine learning techniques, such a memory controller
+can issue memory commands in an efficient manner without the precise knowledge
+of memory module internal status.  With a high-quality ML model, a VDL memory
+system may approach or even surpass the efficiency of a conventional memory
+system of rigid timing, and meanwhile support heterogeneous memory modules.
+
+% In my thought, the feedback includes retry or not (which is a major feedback),
+% plus hints for efficiency. A question here: how about energy efficiency?  The
+% hints can be more useful than the retry feedback: ML may not reliably improve
+% retry efficiency, but may improve the other metrics.
+
+% TODO Here I need a picture.
+
+% TODO here I need a major revision of the following paragraph
+The feedback includes a field that will be used as a feature for the ML circuit
+of the memory controller.  [Here I must write something about the latency
+feedback.]  With this input, the ML circuit predicts the correct timings of
+memory command for each memory request.  Consequently, the memory controller do
+not have to issue memory commands with strict timing -- it only has to make the
+best prediction with the help of ML.  If a prediction is incorrect and the
+memory command cannot be served, the memory controller will get a negative
+feedback and retry the command at a later time.  This framework will drastically
+reduce the complexity of the memory controller: instead of tracking the status
+of all hardware structures of memory devices, which is infeasible for advanced
+NVM devices, the memory controller only has to gauge the status using ML
+modeling.
+
+[In POMI design, the device may send back latency information. This can be added
+to this protocol: Some binary combinations are reserved for certain feedback,
+where the others are feature.]
+
+[What feedback? First, tell if an operation can be done or not. Second,
+Additional information about the feature.] [Scenario 1: Normal memory access,
+sends precharge, activation, and then data transfer.  Device has latches for row
+address, bank/bank group, and column address.  buffers may or may not be ready,
+because device has some control of the buffers. MC sends row/bank/bg address
+first, gets a feedback. Then feedback's meaning depends on device. For example,
+it could be that buffer is ready, not ready; or it can have multiple means, if a
+NVM device has additional cache/buffer.  The feedback may also say the row is
+not ready and a retry is needed. Then, after some waiting, the MC sends column
+address to get the data.  The feedback first tells if a retry is needed.
+Additional feedback tells the feature.]
+
+
+[Draw a diagram here]
+
+[The memory controller still maintains address mapping.  That cannot be done
+using machine learning. ML decides when to send memory command.]
+
+[The feedback should also include information such as if a memory bank is ready
+for the command and so on]
+
+[Two things to say: Data latency is variable, and the memory controller doesn't
+have precise knowledge of what's inside a memory module.]
+
+In this research, the PIs will investigate ML techniques to improve the
+efficiency of variable-latency memory access protocols for heterogeneous memory
+systems, including DRAMs and various NVMs.
+
+- ML is used to predict when data is ready - Additional information is used to
+help ML prediction
+
+In the preliminary studies, the PIs have proposed new memory access protocols
+with carefully relaxed timing requirements, which is necessary for heterogeneous
+memory systems.  [Define heterogeneous memories?]  In the proposed research, the
+
+A key challenge in this approach is to address a potential loss of efficiency
+from the flexibility of the memory access protocol.  In this research, the PI
+proposes new ML throttling techniques to improve the efficiency. [Define the
+goal of the research: Very high efficiency,  complexity]
+
+The complexity of memory subsystem has been increasing substantially to meet the
+ever-increasing demands for higher capacity, bandwidth, throughput, reliability,
+and energy efficiency.  Furthermore, non-volatile memories are poised to
+challenge DRAM, the dominant technology for the past decades.  This transition
+will have far-reaching impacts on computer systems design [expand to OS,
+security, and so on].  However, it also substantially increases the complexity
+of memory subsystem design, which is under high pressure to meet the increasing
+demands from data-intensive workloads and must balance between performance,
+energy efficiency, and reliability.
+
+[Need to revise this part ...]
+
+A core issue to this problem is the rigid design of existing memory access
+protocols, with \DDRx protocols being the dominant design.  A memory access
+protocol articulates how a memory controller communicates to memory devices,
+e.g., DDR4/DDR5 DRAM devices (chips).  The current \DDRx protocols evolve from
+the SDRAM (synchronous DRAM) from 1990s [double check the date], with drastic
+improvements of data rate.  However, like in SDRAM, they are still rigid
+protocols, in which memory devices are slave devices that respond to memory
+commands, e.g., precharge, row activation, and data read/write, in a very strict
+timing requirements.  [Give an example of timing.]  The strict timing
+requirement was necessary, in the era of DRAM memory, to minimize the cost of
+DRAM devices and meanwhile maintain the correctness and efficiency of memory bus
+transactions.
+
+However, in the new era of heterogeneous memories, the strict timing requirement
+has become a severe constraint.  It leaves no room for a memory device to adopt
+any design improvements that affect the latency of memory operations.  For
+example, [PCM write leveling, Rowhammer attack, and so on.] ....  Thus, many
+creatives design ideas proposed so far may not be adopted because they will
+violate the strict timing requirements.
+
+A [add cap] flexible access protocol for main memory, however, must make very
+careful trade-offs between flexibility and efficiency.  Otherwise, it may lead
+to significant loss of performance or energy efficiency [I want to talk about
+latency and bandwidth].  For example, ...
+
+The PIs will investigate ML-throttled memory access scheduling for memory access
+protocols with relaxed timing requirements.  The PIs have studies such protocols
+in previous studies~\cite{}, for DRAM and NVM [double check on NVM], and found
+that they can perform comparably or even better than conventional
+
+The PIs have found in a preliminary study~\cite{} that ML is very promising in
+reducing the inherent overhead of a flexible memory access protocol... [Write
+about preliminary results]
+
+The preliminary study was based on DRAM devices.  Research on a flexible memory
+access protocol for heterogenous NVM systems is much more challenging, and much
+more important, because of diversity of NVM devices. ... [Discuss timing
+variants, write levering, error tolerance, ECC, but avoid redundance.]

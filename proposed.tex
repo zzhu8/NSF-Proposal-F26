@@ -190,10 +190,44 @@ fairness, and others.
 
 % Discuss the others? PAR-BS, ATLAS, TCM, BLISS.
 
-We will study the integration of an ML component into memory access scheduling to
-improve memory throughput and energy efficiency.  Its output 
+We will study the integration of an ML component into the memory access
+scheduling logic to improve memory throughput and energy efficiency.  Its output
+is used to refine the priority of memory requests, which influences the order of
+scheduling of memory requests.  The ML component may also influence the decision
+to close a row buffer or not, which has significant impact on energy efficiency.
+Keeping a memory bank open may significantly improve performance and energy
+efficiency if the next access is a row-buffer hit.  Closing a bank, on the other
+bank, is the best choice if the next access is a row-buffer miss.  Depending on
+the workloads, the optimal decisions of both types can have significant
+correlations to load instruction PC, memory page address, memory bus
+utilization, row-buffer hit/miss history, request queue length, among others.
 
-\subsection{Coordination Framework for ML Components}
+The ML component may significantly explore more opportunities than conventional,
+rigid schemes, which lacks the flexibility to meet dynamic workload demands.
+When combined with a relatively simple scheduling scheme, the new scheme may
+achieve the same performance level as each scheme on its target scenarios.  With
+a moderate cost, it may provide much more robust performance than conventional
+schemes, and explore more opportunities than before.
+
+% I should have discussed the feedback mechanism (learning), but it is tricky.
+
+\subsection{Coordination Framework Through ML Coordinator and Peer
+Feedback}
+
+The project further proposes a coordination framework for those ML components in
+the cache and memory hierarchy to collaborate with each other.  The coordination
+is performed in two forms, namely software coordination and peer feedback.  The
+first form is carried out by a new OS kernel module called ML coordinator, which
+is executed periodically and upon interrupts from ML components.  With the ML
+coordinator, the ML components may help each other in dynamic feature selection,
+
+
+The collaboration will happen in three forms.  First, they may help each other
+in dynamic feature selection.  If an ML component has identified a high-quality
+
+
+will improve the quality of feature selection as well as speed up the
+convergence of the search process.
 
 \subsection{Hardware and Software Coordination}
 

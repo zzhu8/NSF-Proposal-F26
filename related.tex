@@ -33,15 +33,16 @@ Sherwood:ICS-1999, Wang:PACT-2002, Takagi:ICS-2004,
 Varadarajan:MICRO-2006, Keramidas:ICCD-2007, Qureshi:ISCA-2007,
 Jaleel:PACT-2008, Kharbutli:TC-2008, Liu:MICRO-2008,
 Jaleel:ISCA-2010, Sanchez:MICRO-2010, 
-Wu:TACO-2011, Wu:MICRO-2011, Duong:MICRO-2012, Wong:Online-2013, 
+Wu:TACO-2011, Wu:MICRO-2011, Wu:MICRO-2011-2, Ebrahimi:ISCA-2011,
+Duong:MICRO-2012, 
 Tian:JMM-2014, Wang:MICRO-2014, Das:TACO-2015, Teran:MICRO-2016,
-Beckmann:HPCA-2017, Jimenez:MICRO-2017, Kim:ASPLOS-2017,
+Beckmann:HPCA-2017, Jimenez:MICRO-2017, Kim:ASPLOS-2017, Jain:ISCA-2018, 
 Shi:MICRO-2019, Zhang:ICPADS-2020, Sethumurugan:HPCA-2021,
 Vittal:HPCA-2026}.
 
 \paragraph{Prefetching} Prefetching is an effective technique that
 can hide the long memory access latency.  It predicts future cache
-misses based on the current memory access pattern (usually current
+misses based on the observed memory access pattern (usually current
 and past cache misses), and issues those predicted future misses
 in advance in hope that when future misses happen, the required
 data have already been fetched from lower level(s) of memory
@@ -58,7 +59,7 @@ misses~\cite{Fu:MICRO-1992, Chen:TC-1995, Joseph:ISCA-1997,
 Kumar:ISCA-1998, Reinman:MICRO-1999, Lin:TC-2001,
 Hu:HPCA-2003, Nesbit:HPCA-2004, Somogyi:ISCA-2006,
 Manikantan:ICS-2008, Ishii:ICS-2009, Lee:MICRO-2009, 
-Ebrahimi:HPCA-2009, Grannaes:HPEAC-2010, Wenisch:HPCA-2009,
+Ebrahimi:HPCA-2009, Wenisch:HPCA-2009,
 Albericio:TACO-2012, Jain:MICRO-2013,
 Shevgoor:MICRO-2015, Yu:MICRO-2015, 
 Kim:MICRO-2016, Michaud:HPCA-2016,
@@ -69,8 +70,8 @@ Ayers:ASPLOS-2020, Pakalapati:ISCA-2020,
 Bera:MICRO-2021, Vavouliotis:ISCA-2021, Shi:ASPLOS-2021,
 Bera:MICRO-2022, Jiang:MICRO-2022, Lurbe:TC-2022,
 Litz:ASPLOS-2022, Navarro:MICRO-2022, Vavouliotis:MICRO-2022,
-Zhang:SC-2022, Gerogiannis:MICRO-2023, Panda:MICRO-2023, Anisworth:ISCA-2024, 
-Lin:TCAD-2024, Oh:ISCA-2024, Nath:MICRO-2024,
+Zhang:SC-2022, Gerogiannis:MICRO-2023, Panda:MICRO-2023, Ainsworth:ISCA-2024, 
+Lin:TCAD-2024, Oh:ISCA-2024, Nath:MICRO-2024, Duong:ISCA-2024,
 Ai:MICRO-2025, He:MICRO-2025, Li:ISCA-2025, 
 Navarro:TC-2025, Xue:TACO-2025, Zhang:TPDS-2025, Chen:HPCA-2025,
 Huang:SPAA-2026, Huang:TACO-2026, Jiang:TACO-2026, Bera:HPCA-2026,
@@ -79,25 +80,25 @@ Ye:ISCA-2026, Shao:CAL-2026}.
 
 Inaccurate prefetches can negatively impact the performance, as they
 consume valuable bandwidth and resources that could serve demand
-requests and useful prefetches. Serveral schemes have been proposed to
+requests and useful prefetches otherwise. Serveral schemes have been proposed to
 filter out unnecessary prefetches~\cite{Mowry:ASPLOS-1992, 
 Charney:IBMJ-1997,
 Lin:ICCD-2001, Zhuang:ICPP-2003, Mutlu:CAHPC-2004,
 Zhuang:TC-2007,
 Panda:CAL-2016, Bhatia:ISCA-2019, Jamet:HPCA-2024,
-Vavouliotis:HPCA-2025}.  Other schemes control the prefetch degree
-or aggressiveness~\cite{Hur:MICRO-2006, Srinath:HPCA-2007, 
-Ebrahimi:MICRO-2009, Pugsley:HPCA-2014, Panda:TACO-2015, 
-Lee:ICCD-2016, Panda:TC-2016, Sridharan:TACO-2017, Yang:TPDS-2025,
-Min:CAL-2026} or select among multiple prefetchers~\cite{Li:HPCA-2025,
-Gerogiannis:MICRO-2023}.  
+Vavouliotis:HPCA-2025}.  Other schemes control the degree and
+aggressiveness of prefetching or select among multiple prefetchers
+to improve the prefetch accuracy~\cite{Hur:MICRO-2006, Srinath:HPCA-2007, 
+Ebrahimi:MICRO-2009, Pugsley:HPCA-2014, Panda:TACO-2015, Lee:ICCD-2016, 
+Panda:TC-2016, Sridharan:TACO-2017, Yang:TPDS-2025,
+Min:CAL-2026, Li:HPCA-2025, Gerogiannis:MICRO-2023}. 
 
-Prefetch-aware resource/cache management~\cite{Ebrahimi:ISCA-2011,
-Wu:MICRO-2011-2, Jain:ISCA-2018}.
+%Prefetch-aware resource/cache management~\cite{Ebrahimi:ISCA-2011,
+%Wu:MICRO-2011-2, Jain:ISCA-2018}.
 
-combine prefetching and replacement~\cite{Kim:ASPLOS-2017}
+%combine prefetching and replacement~\cite{Kim:ASPLOS-2017}
 
-Memory-side prefetching~\cite{Lin:ISPASS-2007, Rafique:TPDS-2021}
+%Memory-side prefetching~\cite{Lin:ISPASS-2007, Rafique:TPDS-2021}
 
 \paragraph{Memory Access Scheduling}
 For today's multi-core and multi-threaded computers, it is common
@@ -117,36 +118,34 @@ Ebrahimi:MICRO-2011, Muralidhara:MICRO-2011, Kaseridis:MICRO-2011,
 Bojnordi:ISCA-2012, Ausavarungnirun:ISCA-2012, Subramanian:HPCA-2013,
 Shin:HPCA-2014, Zhao:MICRO-2014, Jia:ICPADS-2014,
 Lee:TC-2016, Subramanian:TPDS-2016,
-Song:DATE-2018}
+Song:DATE-2018, Lee:TC-2025, Zhao:ISCA-2026}.
 
+\paragraph{Machine-learning-based Memory System Optimization}
 
-\paragraph{DNN}
-
-RL based memory controller~\cite{Ipek:ISCA-2008}.
-
-Reinforcement learning for prefetcher selection and control~\cite{Gerogiannis:MICRO-2023}
-
-RL framework for prefetching~\cite{Zhang:SC-2022}
-
-Deep learning multi-program prefetch configuration for the IBM POWER 8~\cite{Lurbe:TC-2022}
-
-Perceptron learning for cache replacement~\cite{Teran:MICRO-2016}
-
-Machine-learning-driven intelligent memory system design~\cite{Bera:JMicro-2006}
-
-AI techniques to understand relationships between microarchitecture
-mechanisms and system performance~\cite{Gamatie:TC-2005}
-
-Neural model of data prefetching~\cite{Shi:ASPLOS-2021} (note:already cited above).
-
-Pereceptron-based off-chip load prediction~\cite{Bera:MICRO-2022}, RL-based~\cite{Bera:HPCA-2026}.
-
-Machine-learning based multicore resource management~\cite{Bitirgen:MICRO-2008,
-Martinez:JMicro-2009}
+Machine learning techniques have been actively studied in computer
+architecture research to improve system performance and energy efficiency.
+Different schemes have been proposed using machine learning in various areas
+such as resource management and control, and branch 
+prediction~\cite{Bitirgen:MICRO-2008, Martinez:JMicro-2009, Gamatie:TC-2005, 
+Gerogiannis:MICRO-2023, Jimenez:HPCA-2001, Loh:PACT-2002,
+Seznec:ISCA-2005, Tarjan:TACO-2005, Seznec:CBP-2014,
+Garza:ISCA-2019, Zangeneh:MICRO-2020, Koizumi:ISCA-2026}.
+The system learns automatically from its environment and improves the
+respective policies accordingly.  
+Machine learning approaches have also been extensively studied
+and applied on memory systems, including cache replacement,
+reuse prediction, off-chip access prediction, prefetching, 
+prefetching filtering, and memory controller 
+policy~\cite{Bera:JMicro-2006,
+Teran:MICRO-2016, Sethumurugan:HPCA-2021, Lu:HPCA-2024,
+Bera:MICRO-2022, Bera:HPCA-2026,
+Zhang:SC-2022, Lurbe:TC-2022, Shi:ASPLOS-2021, Duong:ISCA-2024,
+Bhatia:ISCA-2019, Jamet:HPCA-2024,
+Ipek:ISCA-2008}.
 
 % Not cited~\cite{Kaseridis:HPCA-2010, Lee:TC-2011, Hur:JMicro-2006,
-% Hur:HPCA-2008, Mutlu:IJPP-2005, 
-% Championship:2010, Championship:2017,
+% Hur:HPCA-2008, Mutlu:IJPP-2005,Grannaes:HPEAC-2010,  
+% Championship:2010, Championship:2017, Wong:Online-2013, 
 % Mittal:CSUR-2017, Mittal:CSUR-2016, 
 % Championship:2009, Championship:2015, Championship:2017,
 % Championship:2026, Subramanian:ICCD-2014}

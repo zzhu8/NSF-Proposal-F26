@@ -2,22 +2,30 @@
 \label{sec:introduction}
 
 Today's computer systems have seen increasing demands on memory systems'
-performance, energy efficiency, and reliability~\cite{XXX}. Many
-real-world applications are memory-intensive, such as XXX~\cite{XXX}.
+performance, energy efficiency, and reliability. AI 
+applications are highly memory-intensive and require new supports
+from memory architecture~\cite{TechReview:Online-2026}.
 Enormous research efforts have been spent to tackle the memory wall
-problem~\cite{XXX} at different memory hierarchy levels.  Memory
-systems are increasingly complicated, with three levels of caches
+problem at different memory hierarchy levels.  Memory
+systems are increasingly complicated, with multiple levels of caches
 and high data-rate DDR5 devices in main-stream systems, and potentially
 new and diverse memory technologies in the near future.
 As a result, the management of memory system
 is also getting more and more complicated in order to improve
 performance, energy efficiency, and reliability.  For instance,
 various cache replacement policies have been proposed to reduce the cache miss
-rates~\cite{XXX}; numerous prefetching schemes have been proposed to predict
-future cache misses and fetch those in advance~\cite{XXX}; and different memory
+rates~\cite{Das:TACO-2015, Jaleel:ISCA-2010, Sethumurugan:HPCA-2021,
+Shi:MICRO-2019, Wu:TACO-2011}; 
+numerous prefetching schemes have been proposed to predict
+future cache misses and fetch those in advance~\cite{Ai:MICRO-2025,
+Ainsworth:ISCA-2024, Bakhshalipour:HPCA-2018, Bakhshalipour:HPCA-2019,
+Bera:MICRO-2021, Bera:HPCA-2026, Bera:MICRO-2019, Chen:HPCA-2025,
+Duong:ISCA-2024, He:MICRO-2025}; 
+and different memory
 access scheduling schemes have been proposed to reorder concurrent main memory
 requests in order to reduce their average access latency and increase
-their bandwidth~\cite{XXX}.
+their bandwidth~\cite{Rixner:ISCA-2000, Kim:HPCA-2010, Kim:MICRO-2010,
+Mutlu:MICRO-2007, Mutlu:ISCA-2008, Shao:HPCA-2007, Subramanian:TPDS-2016}.
 
 Although each component of those types can work
 effectively to achieve its own goal, they usually operate in isolation

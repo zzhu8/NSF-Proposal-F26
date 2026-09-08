@@ -218,17 +218,40 @@ The project further proposes a coordination framework for those ML components in
 the cache and memory hierarchy to collaborate with each other.  The coordination
 is performed in two forms, namely software coordination and peer feedback.  The
 first form is carried out by a new OS kernel module called ML coordinator, which
-is executed periodically and upon interrupts from ML components.  With the ML
-coordinator, the ML components may help each other in dynamic feature selection,
+is executed periodically upon time interrupts and interrupts from ML components.
+With the ML coordinator, the ML components may help each other in dynamic
+feature selection, as an effective feature at one ML component may also be
+effective at another ML component.  We call the first ML component a leader and
+the second one a follower.  The software coordinator may read the current
+feature selection from special registers of the leader (through memory mapped
+I/O) and write to the special registers of the follower so as to transfer
+all or part of the feature selection.
 
+This approach allows the software ML coordinator to play an important role in
+the coordination, and meanwhile simplifies the hardware interface between the ML
+components.  Sophisticated policies and algorithms can be implemented in the ML
+coordinator.  For example, if the running workload is a parallel, multithreaded
+program, the ML coordinator can proactively synchronize the feature selection of
+the ML components associated with those program threads. The ML coordinator may
+also periodically evaluate the effectiveness of the coordination, using software
+algorithm to decide if the coordination should continue or not.  This approach
+is appropriate for dynamic feature selection because the change of feature
+selection for a time-consuming program may happen relatively infrequently, e.g.,
+at the change of running phases of the current workload.  The overhead of
+software-initialized synchronization of the feature selection is relatively low,
+and the response time of the software is also acceptable.
 
-The collaboration will happen in three forms.  First, they may help each other
-in dynamic feature selection.  If an ML component has identified a high-quality
+Peer feedback provides extra choices of feature input to a ML component from a
+peer ML component. For example, a cache MLC may send cache-related features to a
+memory MLC; for example, features generated from cache miss rates, cache
+utilization rate, active memory regions, and so on.  A memory-MLC may also send
+memory-related features to a cache MLC, which may include features generated
+from memory bus utilization, bank-level parallelism, read/write queue length,
+and so on.  Peer features are selectively enabled like local features.  The
+communication utilizes existing wire connections between caches and memory
+controllers, and thus they may only cause a negligible increase of the circuit
+complexity.
 
-
-will improve the quality of feature selection as well as speed up the
-convergence of the search process.
-
-\subsection{Hardware and Software Coordination}
-
-\subsection{}
+The key questions are how peer features are useful to an MLC, and how to identify
+effective peer features to enable.  We believe peer features are useful additions
+to local features.

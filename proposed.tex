@@ -252,6 +252,23 @@ communication utilizes existing wire connections between caches and memory
 controllers, and thus they may only cause a negligible increase of the circuit
 complexity.
 
-The key questions are how peer features are useful to an MLC, and how to identify
-effective peer features to enable.  We believe peer features are useful additions
-to local features.
+The key questions are how peer features are useful to an MLC, and how to
+identify effective peer features to enable.  We believe peer features are useful
+additions to local features, because correlation between cache and memory
+features are likely to exist between for many workloads.  For example, memory
+bus congestion may indicate a change of running phase of the current workload,
+which can correlate to the best cache replacement decision in the memory
+controller.  The type of correlation may or may not exist, depending on the
+workload, running phases, and other factor.  Machine learning is much better
+than conventional techniques to explore this opportunity for further performance
+improvement, and the use of peer features can enable the exploration.  The
+dynamic selection of peer features is similar to that local features, and thus
+can rely on the existing mechanism for dynamic feature selection.
+
+% Here there is a question: very high cache miss rate will cause memory bus
+% congestion, and thus this feature becomes redundant
+%
+% There is another issue: peer feedback for learning on peer feature requires
+% inter-component communication.  Thus, it means higher energy consumption
+% and more congestion.  The feedback has to be infrequent, which may affect
+% learning effectiveness.

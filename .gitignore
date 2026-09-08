@@ -13,6 +13,7 @@ summary-2025.tex
 summary.pdf
 tmp.txt
 cspell.json
+./Makefile
 
 ## Core latex/pdflatex auxiliary files:
 *.aux

@@ -3,8 +3,6 @@
 \subsection{ML Components for Cache and Memory Management}
 
 
-
-
 % Here memory hierarchy is not the whole hierarchy
 % TODO Move to intro
 %The project will investigate the use of distributed machine leaning components
@@ -124,14 +122,47 @@ ML.  An effective feature is one that has high correlation with the prediction
 outcome of the ML component.  We will explore several strategy for the dynamic
 selection. First, ...
 
-\subsection{Feedback Tables for Online Learning}
+\subsection{The Internal of Cache and Memory MLCs}
 
-% A good design is to use generic memory banks, a set of indexing functions,
-% and shared weight tables.  But I don't want to write about that.
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.8\textwidth]{Figures/ML_Internal.pdf}
+\caption{The generic structure of cache and memory MLCs.}
+\label{fig:ML-Internal}
+\end{figure}
 
+Figure~\ref{fig:ML-Internal} shows the generic internal structure of cache and
+memory MLCs.  First of all, cache and memory MLCs rely on online learning, which
+is different conventional neural network accelerator design.  The cache and
+memory MLCs in this proposal has a key difference from previous designs for
+branch prediction and cache prefetching: it uses a multi-banked memory to host
+weight tables instead of using separate weight tables.  This is the key to
+supporting dynamic feature selection to make the MLCs elastic.  Previous
+designs~\cite{} use customized weight tables, where the features, the number of
+weight tables, and the number of bits per table entry are all fixed.  The
+previous designs have the advantage that, because of the customization, is the
+most efficient in circuit implementation. The downside is that it lacks
+flexibility: after the processor is fabricated, the feature set is fixed and so
+are the circuit details. If the target workloads changes or broadens, the designs
+will likely be sub-optimal.
 
-% Discuss why cache replacement, hardware prefetching, and memory access
-% scheduling
+The proposal replaces fully customized weight table with a unified, multi-banked
+weight memory, as shown in Figure~\ref{fig:ML-Internal}.  It has multiple access
+ports, one per memory bank, and thus can support parallel accesses to weights in
+different banks.   With a carefully designed indexing function (see below), it
+can serve the same as or close to fully customized tables.  Internally, the
+memory banks can be further split sub-banks to for circuit optimizations in
+terms of access latency and energy consumption, but the internal structure is
+not bound to any feature selection.  Figure~\ref{fig:weight_mem} illustrates the
+layout of weight memory to support a given feature set.  The configuration is
+done by software, which can use sophisticated algorithms to decide the optimal
+layout.
+
+Compared to a fully customized design, unified weight memory is slightly less
+efficient for a couple of reasons.  First, the number of bits per weight is now
+the same for all features.  Given a particular feature, this parameter could
+have been increased for more accuracy or decreased for less energy consumption.
+Second, [HERE]
 
 \subsection{ML Component for Cache Replacement}
 
